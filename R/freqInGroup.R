@@ -13,12 +13,12 @@ freqInGroup <- function(data, parameters, NoOfCov){
   vecvalue <- c()
   for (j in 1:length(NoOfCov)) {
     vecname <-  append(vecname, paste(names(parameters)[NoOfCov[j] ],
-                                      1:dim(distinct(data[NoOfCov[j]]))[1]
+                                      1:dim(dplyr::distinct(data[NoOfCov[j]]))[1]
                                       ,sep = ""))
     vecvalue <-append(vecvalue, (
       data %>%
-        group_by(across(NoOfCov[j])) %>%
-        summarise(freq = mean(outcome)))[2] %>%
+        dplyr::group_by(across(NoOfCov[j])) %>%
+        dplyr::summarise(freq = mean(outcome)))[2] %>%
         t() )
   }
   dat <- data.frame(name = vecname, value = vecvalue)

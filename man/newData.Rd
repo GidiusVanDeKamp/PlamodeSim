@@ -4,7 +4,7 @@
 \alias{newData}
 \title{Title}
 \usage{
-newData(data, parameter, Indexes)
+newData(data, parameter, indexes)
 }
 \arguments{
 \item{data}{orginal dataset}

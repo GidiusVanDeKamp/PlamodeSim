@@ -9,13 +9,13 @@
 #' @export
 #'
 plotDiffInTotalOutcomes<- function(data, N, parameter){
-  DifNumOutcomes <- c()
+  difNumOutcomes <- c()
   minsum <-  sum(data$outcome)
   for (i in 1:N){
-    DifNumOutcomes[i] <- sum(NewGroupData(data,
+    difNumOutcomes[i] <- sum(newGroupData(data,
                                           length(data[,1]),
                                           parameter )[,1]) - minsum
   }
-  plot(1:N, DifNumOutcomes,
+  plot(1:N, difNumOutcomes,
        main = "difference in the sum of outcomes between given and generated data")
 }

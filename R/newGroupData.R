@@ -11,7 +11,7 @@
 #'
 newGroupData <- function( data, N, parameter ){
   index <-  sample(1:length(data[,1]), N, replace=T)
-  ProbModel <- ProbsUnderModel( data , parameter, index)
+  ProbModel <- probsUnderModel( data , parameter, index)
   data.frame(NewOutcome =rbinom(N ,1, ProbModel),ind= index)%>%
     return()
 }

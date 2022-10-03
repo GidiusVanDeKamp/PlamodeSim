@@ -8,8 +8,8 @@
 #' @return returns a dataframe with newOutcomes and indexes
 #' @export
 #'
-newData <- function( data, parameter, Indexes ){
-  ProbModel <- ProbsUnderModel( data , parameter, Indexes )
-  data.frame(newOutcome =rbinom(length(Indexes), 1, ProbModel),ind= indexes) %>%
+newData <- function( data, parameter, indexes ){
+  probModel <- probsUnderModel( data , parameter, indexes )
+  data.frame(newOutcome =rbinom(length(indexes), 1, probModel),ind= indexes) %>%
     return()
 }
