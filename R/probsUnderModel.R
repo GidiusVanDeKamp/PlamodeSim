@@ -7,7 +7,7 @@
 #' @return returns a vector with probabilities
 #' @export
 #'
-probsUnderModel <- function( data, parameters , index= 1:dim(data[1])[1]){
+probsUnderModel <- function( data, parameters , index= 1:dim(data)[1]){
   OddsUnderModel <- (as.matrix(data[as.matrix(index),-1]) %*%
                        t(as.matrix(parameters[-1]))) + as.numeric(parameters[1])
   Probs <- plogis(OddsUnderModel)

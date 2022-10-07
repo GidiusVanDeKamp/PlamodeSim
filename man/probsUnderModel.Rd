@@ -4,7 +4,7 @@
 \alias{probsUnderModel}
 \title{returns the probability of an outcome under the parameters specified}
 \usage{
-probsUnderModel(data, parameters, index = 1:dim(data[1])[1])
+probsUnderModel(data, parameters, index = 1:dim(data)[1])
 }
 \arguments{
 \item{data}{orginal dataset}

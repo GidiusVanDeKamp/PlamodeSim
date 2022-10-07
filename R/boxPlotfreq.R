@@ -24,7 +24,6 @@ boxplotFreq <- function( data, parameter, noOfCov, indexes ) {
                dplyr::summarise(freqSim = mean(outcome))
       )[2] %>%
         t()
-
     }
   }
   Dots<-  freqInGroup(data,param, noOfCov)
