@@ -4,14 +4,14 @@
 \alias{newOutcomes}
 \title{simulate a new outcome}
 \usage{
-newOutcomes(plpResult, noSimulations, noPersons)
+newOutcomes(noPersons, props)
 }
 \arguments{
+\item{noPersons}{number of persons in each data set}
+
 \item{plpResult}{a runPlp}
 
 \item{noSimulations}{number of dataset one wants}
-
-\item{noPersons}{number of persons in each data set}
 }
 \value{
 returns a dataframe with newOutcomes and subjectId

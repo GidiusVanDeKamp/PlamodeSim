@@ -9,7 +9,7 @@
 #' @export
 #'
 
-observedFrequencies <- function( data, plpData, studyCovariateId ){
+observedFrequency <- function( data, plpData, studyCovariateId ){
 
   indexOutcome <- ( data %>%
                     dplyr::filter(newOutcomes == 1) %>%
@@ -17,14 +17,14 @@ observedFrequencies <- function( data, plpData, studyCovariateId ){
 
   withOutcomeAndCovariate <- (plpData$covariateData$covariates %>%
                              dplyr::filter( rowId %in% indexOutcome)%>%
-                             collect()
+                               dplyr::collect()
                              )$rowId %>%
                              unique() %>%
                              length()
 
   withCovariate  <- (plpData$covariateData$covariates %>%
                     dplyr::filter( rowId %in% !!data$rowId )%>%
-                    collect())$rowId %>%
+                      dplyr::collect())$rowId %>%
                     unique() %>%
                     length()
 

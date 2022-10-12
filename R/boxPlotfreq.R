@@ -32,3 +32,20 @@ boxplotFreq <- function( data, parameter, noOfCov, indexes ) {
     ggplot2::geom_point(data= Dots, ggplot2::aes(name, value), col= "green")+
     ggplot2::labs(x= "facor", y= "frequency")
 }
+
+freqInGroup <- function(data, parameters, NoOfCov){
+  vecname <- c()
+  vecvalue <- c()
+  for (j in 1:length(NoOfCov)) {
+    vecname <-  append(vecname, paste(names(parameters)[NoOfCov[j] ],
+                                      1:dim(dplyr::distinct(data[NoOfCov[j]]))[1]
+                                      ,sep = ""))
+    vecvalue <-append(vecvalue, (
+      data %>%
+        dplyr::group_by(across(NoOfCov[j])) %>%
+        dplyr::summarise(freq = mean(outcome)))[2] %>%
+        t() )
+  }
+  dat <- data.frame(name = vecname, value = vecvalue)
+  return(dat)
+}
