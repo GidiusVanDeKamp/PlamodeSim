@@ -7,16 +7,14 @@
 newPropsParameters(plpData, parameters, modelName)
 }
 \arguments{
-\item{parameters}{specifies the parameters used to model new data}
+\item{plpData}{a data set as used for plp}
 
-\item{plpResult}{a runPlp}
+\item{parameters}{parameters as returned by plp}
 
-\item{noSimulations}{number of dataset one wants}
-
-\item{noPersons}{number of persons in each data set}
+\item{modelName}{now it only works for "logistic"}
 }
 \value{
-returns a dataframe with newOutcomes and subjectId
+returns a dataframe with probabilties d
 }
 \description{
 simulate a new outcome

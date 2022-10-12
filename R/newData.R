@@ -3,7 +3,7 @@
 #'
 #' @param data orginal dataset
 #' @param parameter parameters used to obtain new data
-#' @param Indexes a vector of indexes of the patients u want new outcomes for
+#' @param indexes a vector of indexes of the patients u want new outcomes for
 #'
 #' @return returns a dataframe with newOutcomes and indexes
 #' @export

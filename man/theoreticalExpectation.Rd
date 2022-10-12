@@ -9,10 +9,10 @@ theoreticalExpectation(plpData, parameters)
 \arguments{
 \item{plpData}{a data set}
 
-\item{covariateId}{number of a covariate id}
+\item{parameters}{parameters in a dataset, dataset has two rows first with the parameter and the second with the covariateId}
 }
 \value{
-returns a number between 0 and 1
+returns a number between 0 and 1 what is the estimated frequency,
 }
 \description{
 frequency of a covariate in a dataset

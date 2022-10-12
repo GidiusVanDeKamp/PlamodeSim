@@ -11,16 +11,14 @@ newPropsParametersPlpResults(
 )
 }
 \arguments{
-\item{plpResult}{a runPlp}
+\item{plpResult}{a data set returned by plp}
 
-\item{parameters}{specifies the parameters used to model new data}
+\item{plpData}{a data set like the type used for plp}
 
-\item{noSimulations}{number of dataset one wants}
-
-\item{noPersons}{number of persons in each data set}
+\item{parameters}{a data set like the type used for plp}
 }
 \value{
-returns a dataframe with newOutcomes and subjectId
+returns a dataframe with probabilites
 }
 \description{
 simulate a new outcome

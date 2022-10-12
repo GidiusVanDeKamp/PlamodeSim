@@ -7,14 +7,12 @@
 logNewPropsParameters(plpData, parameters)
 }
 \arguments{
+\item{plpData}{a plp data set}
+
 \item{parameters}{specifies the parameters used to model new data}
-
-\item{plpResult}{a runPlp}
-
-\item{covariates}{should be removed}
 }
 \value{
-returns a dataframe with newOutcomes and subjectId
+returns a dataframe with propbabities
 }
 \description{
 simulate a new outcome

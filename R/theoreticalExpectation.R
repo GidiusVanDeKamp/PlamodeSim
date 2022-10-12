@@ -1,9 +1,9 @@
 #' frequency of a covariate in a dataset
 #'
 #' @param plpData a data set
-#' @param covariateId number of a covariate id
+#' @param parameters parameters in a dataset, dataset has two rows first with the parameter and the second with the covariateId
 #'
-#' @return returns a number between 0 and 1
+#' @return returns a number between 0 and 1 what is the estimated frequency,
 #' @export
 #'
 #'

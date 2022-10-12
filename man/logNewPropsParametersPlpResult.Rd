@@ -11,14 +11,14 @@ logNewPropsParametersPlpResult(
 )
 }
 \arguments{
-\item{plpResult}{a runPlp}
+\item{plpResult}{a data set returned by plp}
 
-\item{parameters}{specifies the parameters used to model new data}
+\item{plpData}{a data set like the type used for plp}
 
-\item{covariates}{should be removed}
+\item{parameters}{a data set like the type returned by plp}
 }
 \value{
-returns a dataframe with newOutcomes and subjectId
+returns a dataframe with probabilites
 }
 \description{
 simulate a new outcome

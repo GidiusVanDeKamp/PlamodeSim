@@ -14,10 +14,20 @@ visualOutcomeCovariateId(
 )
 }
 \arguments{
-\item{data}{a data set as returned by newOutcomesParameters}
+\item{plpResult}{a data set returned by plp}
+
+\item{plpData}{a data set like the type used for plp}
+
+\item{studyCovariateId}{a number, the covariateId of the to study covariate}
+
+\item{noSimulations}{number of simulations}
+
+\item{noPersons}{number of persons}
+
+\item{parameters}{a data set like the type used for plp}
 }
 \value{
-returns a boxplot for the frequencies of the outcome
+returns a histogram for the frequencies of the outcome
 }
 \description{
 simulate a new outcome

@@ -1,8 +1,8 @@
 #' simulate a new outcome
 #'
 #' @param data A data set as returned by newOutcomes
-#' @param covariates the covariates (class covariateData)
-#' @param studycovariateId the covariateId of the to study covariate
+#' @param plpData a dataset
+#' @param studyCovariateId the covariateId of the to study covariate
 #'
 #' @return returns a vector with length of number of simulations with the frequency
 #'  of the outcome for the pasients with covariate of the specified covariateId

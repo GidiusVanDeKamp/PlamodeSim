@@ -7,10 +7,16 @@
 visualOutcome(plpData, noSimulations, noPersons, parameters)
 }
 \arguments{
-\item{data}{a data set as returned by newOutcomesParameters}
+\item{plpData}{a data set like the type used for plp}
+
+\item{noSimulations}{number of simulations}
+
+\item{noPersons}{number of persons}
+
+\item{parameters}{a data set like the type used for plp}
 }
 \value{
-returns a boxplot for the frequencies of the outcome
+returns a histogram for the frequencies of the outcome
 }
 \description{
 simulate a new outcome

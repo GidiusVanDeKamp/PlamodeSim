@@ -1,8 +1,7 @@
 #' simulate a new outcome
 #'
-#' @param plpResult a runPlp
-#' @param noSimulations number of dataset one wants
-#' @param noPersons number of persons in each data set
+#' @param props a vector with the probabilities order by rowId
+#' @param noPersons number of persons in the returned data set
 #'
 #' @return returns a dataframe with newOutcomes and subjectId
 #' @export

@@ -11,7 +11,7 @@ newData(data, parameter, indexes)
 
 \item{parameter}{parameters used to obtain new data}
 
-\item{Indexes}{a vector of indexes of the patients u want new outcomes for}
+\item{indexes}{a vector of indexes of the patients u want new outcomes for}
 }
 \value{
 returns a dataframe with newOutcomes and indexes

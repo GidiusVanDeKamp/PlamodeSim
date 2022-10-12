@@ -1,10 +1,9 @@
 #' simulate a new outcome
 #'
-#' @param plpResult a runPlp
-#' @param covariates should be removed
+#' @param plpData a plp data set
 #' @param parameters specifies the parameters used to model new data
 #'
-#' @return returns a dataframe with newOutcomes and subjectId
+#' @return returns a dataframe with propbabities
 #' @export
 #'
 logNewPropsParameters <- function( plpData,

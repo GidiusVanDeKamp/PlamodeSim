@@ -9,9 +9,9 @@ observedFrequencies(data, plpData, studyCovariateId)
 \arguments{
 \item{data}{A data set as returned by newOutcomes}
 
-\item{covariates}{the covariates (class covariateData)}
+\item{plpData}{a dataset}
 
-\item{studycovariateId}{the covariateId of the to study covariate}
+\item{studyCovariateId}{the covariateId of the to study covariate}
 }
 \value{
 returns a vector with length of number of simulations with the frequency

@@ -1,8 +1,13 @@
 #' simulate a new outcome
 #'
-#' @param data a data set as returned by newOutcomesParameters
+#' @param plpData a data set like the type used for plp
+#' @param plpResult a data set returned by plp
+#' @param noPersons number of persons
+#' @param noSimulations number of simulations
+#' @param studyCovariateId a number, the covariateId of the to study covariate
+#' @param parameters a data set like the type used for plp
 #'
-#' @return returns a boxplot for the frequencies of the outcome
+#' @return returns a histogram for the frequencies of the outcome
 #' @export
 #'
 visualOutcomeCovariateId <- function( plpResult,
@@ -12,7 +17,7 @@ visualOutcomeCovariateId <- function( plpResult,
                      noPersons,
                      parameters =plpResult$covariateSummary$covariateValue){
 
-  newprops<- newPropsParameters(plpResult , plpData, parameters)
+  newprops<- newPropsParametersPlpResults(plpResult , plpData, parameters)
   obsfreq<- c()
   for(i in 1:noSimulations){
     newout <- newOutcomes(noPersons ,newprops$newProps )

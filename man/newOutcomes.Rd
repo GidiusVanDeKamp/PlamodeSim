@@ -7,11 +7,9 @@
 newOutcomes(noPersons, props)
 }
 \arguments{
-\item{noPersons}{number of persons in each data set}
+\item{noPersons}{number of persons in the returned data set}
 
-\item{plpResult}{a runPlp}
-
-\item{noSimulations}{number of dataset one wants}
+\item{props}{a vector with the probabilities order by rowId}
 }
 \value{
 returns a dataframe with newOutcomes and subjectId

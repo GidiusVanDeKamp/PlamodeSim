@@ -1,11 +1,11 @@
 #' simulate a new outcome
 #'
-#' @param plpResult a runPlp
-#' @param noSimulations number of dataset one wants
-#' @param noPersons number of persons in each data set
-#' @param parameters specifies the parameters used to model new data
+#' @param plpData a data set like the type used for plp
+#' @param plpResult a data set returned by plp
+#' @param parameters a data set like the type used for plp
 #'
-#' @return returns a dataframe with newOutcomes and subjectId
+#'
+#' @return returns a dataframe with probabilites
 #' @export
 #'
 newPropsParametersPlpResults <- function(plpResult,

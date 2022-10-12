@@ -1,15 +1,18 @@
 #' simulate a new outcome
 #'
-#' @param data a data set as returned by newOutcomesParameters
+#' @param plpData a data set like the type used for plp
+#' @param noPersons number of persons
+#' @param noSimulations number of simulations
+#' @param parameters a data set like the type used for plp
 #'
-#' @return returns a boxplot for the frequencies of the outcome
+#'
+#' @return returns a histogram for the frequencies of the outcome
 #' @export
 #'
 visualOutcome <- function( plpData,
                            noSimulations,
                            noPersons,
                            parameters ){
-
   newprops<- newPropsParameters(  plpData, parameters, "logistic")
   obsfreq<- c()
   for(i in 1:noSimulations){
@@ -29,9 +32,6 @@ visualOutcome <- function( plpData,
   plotGreenLine <-  part/total
 
   redlines<- theoreticalExpectation(plpData, parameters)
-  #return(redlines)
-  #return(redlines)
-  #return(obsfreq)
    ggplot2::ggplot(obsfreq, ggplot2::aes(obsfreq))+
    ggplot2::geom_histogram(binwidth=0.025)+
    ggplot2::geom_vline(xintercept =plotGreenLine, col='green')+

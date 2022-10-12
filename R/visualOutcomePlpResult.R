@@ -1,8 +1,13 @@
 #' simulate a new outcome
 #'
-#' @param data a data set as returned by newOutcomesParameters
+#' @param plpResult a data set as returned by newOutcomesParameters
+#' @param plpData a data set as with covariates,
+#' @param noSimulations number of simulations preformed
+#' @param noPersons numner of person in each simulatons
+#' @param parameters a data set with parameters
 #'
-#' @return returns a boxplot for the frequencies of the outcome
+#'
+#' @return returns a histogram for the frequencies of the outcome
 #' @export
 #'
 visualOutcomePlpResult <- function( plpResult,

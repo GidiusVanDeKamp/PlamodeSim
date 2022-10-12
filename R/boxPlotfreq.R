@@ -2,8 +2,8 @@
 #'
 #' @param data Original dataset
 #' @param parameter Parameters for the model used to generate the datasets
-#' @param NoOfCov Number/place of the covariate u want study with the plot
-#' @param Indexes Matrix with for echt colum a simulation and each row contains
+#' @param noOfCov Number/place of the covariate u want study with the plot
+#' @param indexes Matrix with for echt colum a simulation and each row contains
 #' the indexes of the pasients in the group.
 #'
 #' @return makes a plot

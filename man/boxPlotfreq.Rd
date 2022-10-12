@@ -11,9 +11,9 @@ boxplotFreq(data, parameter, noOfCov, indexes)
 
 \item{parameter}{Parameters for the model used to generate the datasets}
 
-\item{NoOfCov}{Number/place of the covariate u want study with the plot}
+\item{noOfCov}{Number/place of the covariate u want study with the plot}
 
-\item{Indexes}{Matrix with for echt colum a simulation and each row contains
+\item{indexes}{Matrix with for echt colum a simulation and each row contains
 the indexes of the pasients in the group.}
 }
 \value{

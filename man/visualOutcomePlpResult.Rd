@@ -13,10 +13,18 @@ visualOutcomePlpResult(
 )
 }
 \arguments{
-\item{data}{a data set as returned by newOutcomesParameters}
+\item{plpResult}{a data set as returned by newOutcomesParameters}
+
+\item{plpData}{a data set as with covariates,}
+
+\item{noSimulations}{number of simulations preformed}
+
+\item{noPersons}{numner of person in each simulatons}
+
+\item{parameters}{a data set with parameters}
 }
 \value{
-returns a boxplot for the frequencies of the outcome
+returns a histogram for the frequencies of the outcome
 }
 \description{
 simulate a new outcome

@@ -1,10 +1,10 @@
 #' simulate a new outcome
 #'
-#' @param plpResult a runPlp
-#' @param covariates should be removed
-#' @param parameters specifies the parameters used to model new data
+#' @param plpData a data set like the type used for plp
+#' @param plpResult a data set returned by plp
+#' @param parameters a data set like the type returned by plp
 #'
-#' @return returns a dataframe with newOutcomes and subjectId
+#' @return returns a dataframe with probabilites
 #' @export
 #'
 logNewPropsParametersPlpResult <- function( plpResult,
@@ -17,9 +17,7 @@ logNewPropsParametersPlpResult <- function( plpResult,
   placeNewCovariates <- ((plpResult$covariateSummary$covariateValue==parameters)== FALSE) %>%
      which()
 
-  # # the first parameter is not the intercept is it? i dont see an intercept,
-  # # maybe it is a bit redundant any way sinds sex is listed twice in the covariates.
-  # # plpResult$covariateSummary$covariateName[53:54]
+  # # REturn this PART WITH THE CORRECT PARAMETERS PLS
 
   # if(1 %in% placeNewCovariates){
   #   odds <- odds+ diffparameters[1]
