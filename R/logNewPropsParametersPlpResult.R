@@ -7,23 +7,17 @@
 #' @return returns a dataframe with probabilites
 #' @export
 #'
-logNewPropsParametersPlpResult <- function( plpResult,
+logNewPropsParametersPlpResult <- function( plpResult, #this function will be skipped
                                    plpData,
-                                   parameters =plpResult$covariateSummary$covariateValue){
+                                   parameters =plpResult$model$model$coefficients){
   props <-  plpResult$prediction$value
   odds <- qlogis(props)
-  diffparameters<- parameters-plpResult$covariateSummary$covariateValue
+  diffparameters<- parameters['betas']-plpResult$model$model$coefficients['betas']
 
-  placeNewCovariates <- ((plpResult$covariateSummary$covariateValue==parameters)== FALSE) %>%
+  placeNewCovariates <- ((plpResult$model$model$coefficients['betas']==parameters['betas'])== FALSE) %>%
      which()
 
-  # # REturn this PART WITH THE CORRECT PARAMETERS PLS
-
-  # if(1 %in% placeNewCovariates){
-  #   odds <- odds+ diffparameters[1]
-  #   placeNewCovariates= placeNewCovariates[-1]
-  # }
-
+  return(placeNewCovariates)
   for(i in placeNewCovariates ){
     covariateIds <- plpResult$covariateSummary[i,1]
     rowIdsWithCovariate <- (plpData$covariateData$covariates %>%
@@ -32,8 +26,7 @@ logNewPropsParametersPlpResult <- function( plpResult,
       as.vector())$rowId
 
     indexCovariates <- which(plpResult$prediction$rowId %in% rowIdsWithCovariate)
-    # return(rowIdsWithCovariate %in% plpResult$prediction$rowId )
-    # return(c(length(indexCovariates),length( rowIdsWithCovariate), unique(length( rowIdsWithCovariate))))
+
     for(j in 1:length(indexCovariates)){
       odds[indexCovariates[j]]<- odds[indexCovariates[j]]+ diffparameters[i]
     }

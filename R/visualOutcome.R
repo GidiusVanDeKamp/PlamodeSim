@@ -16,7 +16,7 @@ visualOutcome <- function( plpData,
   newprops<- newPropsParameters(  plpData, parameters, "logistic")
   obsfreq<- c()
   for(i in 1:noSimulations){
-    newout <- newOutcomes(noPersons ,newprops$newProps )
+    newout <- newOutcomes(noPersons ,newprops )
     obsfreq<- obsfreq %>%
       append(sum(newout$newOutcomes)/ noPersons)
   }
@@ -35,7 +35,7 @@ visualOutcome <- function( plpData,
    ggplot2::ggplot(obsfreq, ggplot2::aes(obsfreq))+
    ggplot2::geom_histogram(binwidth=0.025)+
    ggplot2::geom_vline(xintercept =plotGreenLine, col='green')+
-   ggplot2::geom_vline(xintercept =redlines , col='red')+
+  # ggplot2::geom_vline(xintercept =redlines , col='red')+
    ggplot2::coord_cartesian(xlim=c(-0.1,1.1))+
    ggplot2::ggtitle(paste(
     "histogram of the frequency of the outcome for",

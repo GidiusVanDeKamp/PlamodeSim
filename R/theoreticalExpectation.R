@@ -19,7 +19,7 @@ theoreticalExpectation<- function(plpData,
   return(redlines)
   }
 
-frequencyCovariatePlpData<- function(plpData,  #doesnt work correctly
+frequencyCovariatePlpData<- function(plpData,  #doesnt work correctly?? i think it does
                                      covariateIdToStudy
                                      ){
   noOfcov <-  plpData$covariateData$covariates %>%

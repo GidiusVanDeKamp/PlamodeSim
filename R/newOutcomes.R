@@ -8,8 +8,8 @@
 #'
 newOutcomes<- function( noPersons, props ){
 
-  index <-  sample(1:length(props), noPersons, replace=T)
-  newOutcomes <- stats::rbinom(noPersons, 1, props[index])
+  index <-  sample(1:dim(props)[1], noPersons, replace=T)
+  newOutcomes <- stats::rbinom(noPersons, 1, props[index,1])
 
   return(data.frame(rowId = index, newOutcomes= newOutcomes ) )
 }
