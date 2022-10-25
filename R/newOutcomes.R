@@ -1,6 +1,6 @@
 #' simulate a new outcome
 #'
-#' @param props a vector with the probabilities order by rowId
+#' @param props a vector with the probabilities ordered by rowId
 #' @param noPersons number of persons in the returned data set
 #'
 #' @return returns a dataframe with newOutcomes and subjectId
@@ -13,4 +13,3 @@ newOutcomes<- function( noPersons, props ){
 
   return(data.frame(rowId = index, newOutcomes= newOutcomes ) )
 }
-# newOutcomes( 15, newPropsParameters(plpData ,covariates, param)$newProps)

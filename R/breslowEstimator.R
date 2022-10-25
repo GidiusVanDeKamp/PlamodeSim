@@ -1,7 +1,7 @@
 #'
-#' @param plpData a data set like the type used for plp
+#' @param plpData a data set like the type used with plp
 #' @param timeInDays time in days
-#' @param parameters a data set like the type used for plp
+#' @param parameters a data set like the type used with plp
 #'
 #'
 #' @return returns the Breslow estimator

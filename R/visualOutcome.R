@@ -1,9 +1,9 @@
 #' simulate a new outcome
 #'
 #' @param plpData a data set like the type used for plp
-#' @param noPersons number of persons
 #' @param noSimulations number of simulations
-#' @param parameters a data set like the type used for plp
+#' @param noPersons number of persons in each simulation
+#' @param parameters a data set with parameters like the type used for plp
 #'
 #'
 #' @return returns a histogram for the frequencies of the outcome

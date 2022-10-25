@@ -1,13 +1,12 @@
-#' simulate a new outcome
 #'
-#' @param plpData a data set like the type used for plp
-#' @param plpResult a data set returned by plp
-#' @param noPersons number of persons
+#' @param plpData a data set like the type used in PatientLevelPredict
+#' @param restrictToCovariateId a number, the covariateId of covariate to restrict to.
 #' @param noSimulations number of simulations
-#' @param studyCovariateId a number, the covariateId of the to study covariate
-#' @param parameters a data set like the type used for plp
+#' @param noPersons number of persons in each simulation
+#' @param parameters a data set with parameters like the type used for plp
+#' @param modelName a string with the type of model.
 #'
-#' @return returns a histogram for the frequencies of the outcome
+#' @return returns a histogram for the frequencies of the outcome there is only simulated from patients that have the given covariate Id.
 #' @export
 #'
 visualOutcomeCovariateId2 <- function(
@@ -18,11 +17,9 @@ visualOutcomeCovariateId2 <- function(
                      parameters,
                      modelName
                      ){
-  # we will generate new outcome only from persons who have a specific covariate
   plpModel<- makeModel(parameters,modelName)
   newprops<- PatientLevelPrediction::predictPlp(plpModel, plpData,plpData$cohorts)
 
-  #newprops<- newPropsParameters(plpData, parameters, modelName)
   obsfreq<- c()
   indexesWithCovariate <- (plpData$covariateData$covariates %>%
                           filter(covariateId == restrictToCovariateId)%>%
@@ -36,7 +33,6 @@ visualOutcomeCovariateId2 <- function(
     obs <- sum(newoutcomes)/noPersons
     obsfreq <- obsfreq %>%
                append(obs)
-              #append(observedFrequency(newout,plpData ,restrictToCovariateId ))
 
   }
   obsfreq <- data.frame(freq= obsfreq)
