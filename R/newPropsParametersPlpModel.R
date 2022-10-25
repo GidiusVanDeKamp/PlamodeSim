@@ -13,9 +13,11 @@ newPropsParametersPlpModel <- function(plpModel,
                                ){
 
   if( plpModel$model$modelType == "logistic" ){
-    return(logNewPropsParametersPlpModel(plpModel,
-                                          plpData )
+    return( predictPlp(plpModel, plpData, plpData$cohorts) # one could limit the outcomes if wanted
            )
+  }
+  else if ( plpModel$model$modelType == "cox" ){
+    return( "coming soon")
   }
   else{
     return(paste("models of the type",plpModel$model$modelType ,"are not yet implemented"))

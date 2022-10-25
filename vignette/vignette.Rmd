@@ -213,7 +213,7 @@ newOut <- newOutcomes(200, newprobs)
 ## Visual simulations
 the function `visualOutcome` simulated new data and then plots the frequency of the outcome.
 right now the function `visualOutcome` only works for a logistic model.
-````{r, visual, message= F, out.width = "100%"}
+````{r, visual, message= F, out.width = "60%"}
 visualOutcome(plpData,50,200,Parameters)
 visualOutcome(plpData,50,200,UnfittedParameters)
 ````
@@ -221,7 +221,7 @@ Here we have plotted 50 times the frequency of the outcome for a simulated datas
 
 ## Visual of a specific covariate
 
-`````{r, visual2, message= F, out.width = "100%"}
+`````{r, visual2, message= F, out.width = "60%"}
 
 covariateIdToStudy<- plpResult$covariateSummary$covariateId[3]
 UnfittedParameters[3,]

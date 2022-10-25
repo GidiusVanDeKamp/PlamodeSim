@@ -34,7 +34,7 @@ visualOutcome <- function( plpData,
   total <- length(plpData$cohorts$targetId)
   plotGreenLine <-  part/total
 
-  redlines<- theoreticalExpectation(plpData, parameters)
+  #redlines<- theoreticalExpectation(plpData, parameters)
    ggplot2::ggplot(obsfreq, ggplot2::aes(obsfreq))+
    ggplot2::geom_histogram(binwidth=0.025)+
    ggplot2::geom_vline(xintercept =plotGreenLine, col='green')+
