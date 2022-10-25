@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2022-10-19" />
+
+<title>vignette</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">vignette</h1>
+<h4 class="date">2022-10-19</h4>
+
+
+
+<div id="installing-plasmodesim-using-remotes" class="section level2">
+<h2>installing plasmodeSim using remotes</h2>
+<p>To install using <code>remotes</code> run:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;remotes&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;GidiusVanDeKamp/PlasmodeSim&quot;</span>)</span></code></pre></div>
+</div>
+<div id="setting-up" class="section level2">
+<h2>Setting up</h2>
+<p>This documents skips some parts, we have skipped the steps to obtain
+the plpResults and the plpData.</p>
+<p>We begin by loading the package, together with the package
+<code>PatientLevelPrediction</code>, since the package
+<code>PlasmodeSim</code> is designed to be used with
+<code>PatientLevelPrediction</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PlasmodeSim)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(PatientLevelPrediction)</span></code></pre></div>
+<p>In this file we will show which functions are in the
+<code>PatientLevelPrediction</code> package, by adding the unrequired
+<code>PatientLevelPrediction::</code> before the function.</p>
+</div>
+<div id="example-1" class="section level2">
+<h2>Example 1</h2>
+<p>In this example we obtain new outcomes of a fitted logistic
+model.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plpModel <span class="ot">&lt;-</span> plpResult<span class="sc">$</span>model</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>newprobs <span class="ot">&lt;-</span> PatientLevelPrediction<span class="sc">::</span><span class="fu">predictPlp</span>(plpModel, plpData, plpData<span class="sc">$</span>cohorts)</span></code></pre></div>
+<pre><code>## Removing infrequent and redundant covariates and normalizing
+## Removing infrequent and redundant covariates covariates and normalizing took 0.176 secs
+## Prediction took 0.184 secs</code></pre>
+<p>The function predictPlp returned this information.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>newOut <span class="ot">&lt;-</span> <span class="fu">newOutcomes</span>(<span class="dv">200</span>, newprobs)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(newOut)</span></code></pre></div>
+<pre><code>##   rowId newOutcomes
+## 1   443           1
+## 2  1792           0
+## 3   432           0
+## 4   845           0
+## 5  1400           1
+## 6  1726           0</code></pre>
+<p>In the output of newOut patients are drawed randomly with the same
+chance, the patients could be drawed multiple times. If this happens
+they can have a different outcome. The function <code>newOutcomes</code>
+needs a data set where the column that contains the probabilities is
+called <code>value</code>.</p>
+</div>
+<div id="example-2" class="section level2">
+<h2>Example 2</h2>
+<p>We here we show how to simulate new outcomes from an unfitted
+logistic model.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Parameters <span class="ot">&lt;-</span> plpResult<span class="sc">$</span>model<span class="sc">$</span>model<span class="sc">$</span>coefficients</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>UnfittedParameters <span class="ot">&lt;-</span> Parameters</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>UnfittedParameters[<span class="dv">1</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.4</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>UnfittedParameters[<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fl">0.4</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(UnfittedParameters)</span></code></pre></div>
+<pre><code>##     betas covariateIds
+## 1 -0.4000  (Intercept)
+## 2  0.4000         6003
+## 3  0.4000         8003
+## 4  0.4000         9003
+## 5  0.0196      8507001
+## 6  0.0000     28060210</code></pre>
+<p>For the logistic model it is necessary that the parameters are stored
+in a dataset with a column called <code>betas</code> and a column called
+<code>covariateIds</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>plpModelunfitted <span class="ot">&lt;-</span> <span class="fu">makeModel</span>(UnfittedParameters, <span class="st">&quot;logistic&quot;</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>newprobs <span class="ot">&lt;-</span> PatientLevelPrediction<span class="sc">::</span><span class="fu">predictPlp</span>(plpModelunfitted, plpData,plpData<span class="sc">$</span>cohorts)</span></code></pre></div>
+<pre><code>## Removing infrequent and redundant covariates and normalizing
+## Removing infrequent and redundant covariates covariates and normalizing took 0.178 secs
+## Prediction took 0.176 secs</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>newOut <span class="ot">&lt;-</span> <span class="fu">newOutcomes</span>(<span class="dv">200</span>, newprobs)</span></code></pre></div>
+</div>
+<div id="visual-simulations" class="section level2">
+<h2>Visual simulations</h2>
+<p>the function <code>visualOutcome</code> simulated new data and then
+plots the frequency of the outcome. right now the function
+<code>visualOutcome</code> only works for a logistic model.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualOutcome</span>(plpData,<span class="dv">50</span>,<span class="dv">200</span>,Parameters)</span></code></pre></div>
+<pre><code>## Removing infrequent and redundant covariates and normalizing
+## Removing infrequent and redundant covariates covariates and normalizing took 0.186 secs
+## Prediction took 0.188 secs</code></pre>
+<p><img src="data:image/png;base64,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" width="100%" /></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualOutcome</span>(plpData,<span class="dv">50</span>,<span class="dv">200</span>,UnfittedParameters)</span></code></pre></div>
+<pre><code>## Removing infrequent and redundant covariates and normalizing
+## Removing infrequent and redundant covariates covariates and normalizing took 0.188 secs
+## Prediction took 0.172 secs</code></pre>
+<p><img src="data:image/png;base64,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" width="100%" />
+Here we have plotted 50 times the frequency of the outcome for a
+simulated dataset with 200 people.</p>
+</div>
+<div id="visual-of-a-specific-covariate" class="section level2">
+<h2>Visual of a specific covariate</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>covariateIdToStudy<span class="ot">&lt;-</span> plpResult<span class="sc">$</span>covariateSummary<span class="sc">$</span>covariateId[<span class="dv">3</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>UnfittedParameters[<span class="dv">3</span>,]</span></code></pre></div>
+<pre><code>##   betas covariateIds
+## 3   0.4         8003</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualOutcomeCovariateId</span>(plpData, covariateIdToStudy, <span class="dv">20</span>, <span class="dv">200</span>, UnfittedParameters, <span class="st">&quot;logistic&quot;</span>)</span></code></pre></div>
+<pre><code>## Removing infrequent and redundant covariates and normalizing
+## Removing infrequent and redundant covariates covariates and normalizing took 0.189 secs
+## Prediction took 0.191 secs</code></pre>
+<p><img src="data:image/png;base64,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" width="100%" /></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">visualOutcomeCovariateId2</span>(plpData, covariateIdToStudy, <span class="dv">20</span>, <span class="dv">200</span>, UnfittedParameters, <span class="st">&quot;logistic&quot;</span>)</span></code></pre></div>
+<pre><code>## Removing infrequent and redundant covariates and normalizing
+## Removing infrequent and redundant covariates covariates and normalizing took 0.173 secs
+## Prediction took 0.188 secs</code></pre>
+<p><img src="data:image/png;base64,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" width="100%" />
+As one can see <code>visualOutcomeCovariateId</code> and
+<code>visualOutcomeCovariateId2</code> are very similiar, they both
+calculate and plot the frequency for a group with a specific covariate
+present. The small difference is that
+<code>visualOutcomeCovariateId</code> filters a simulated outcome set to
+only keep the ones where the covariate is present, and
+<code>visualOutcomeCovariateId2</code> only simulates from patients that
+have the covariate present. we see they are almost the identical only
+<code>visualOutcomeCovariateId2</code> is spread out less because the
+groups for calculating the frequency with are bigger.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

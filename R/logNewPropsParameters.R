@@ -13,7 +13,7 @@ logNewPropsParameters <- function( plpData,
 
   for(i in 2:dim(parameters)[1] ){
     if (parameters[i,1]!=0 ){
-      covariateIds <- param[i,2]
+      covariateIds <- parameters[i,2]
       rowIdsWithCovariate <- (plpData$covariateData$covariates %>%
                                 dplyr::filter(covariateId == as.integer(covariateIds))%>%
                                 dplyr::collect() %>%

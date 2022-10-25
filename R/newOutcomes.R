@@ -9,7 +9,7 @@
 newOutcomes<- function( noPersons, props ){
 
   index <-  sample(1:dim(props)[1], noPersons, replace=T)
-  newOutcomes <- stats::rbinom(noPersons, 1, props[index,1])
+  newOutcomes <- stats::rbinom(noPersons, 1, props[index,'value'])
 
   return(data.frame(rowId = index, newOutcomes= newOutcomes ) )
 }

@@ -19,7 +19,10 @@ visualOutcomeCovariateId <- function(
                      modelName
                      ){
 
-  newprops<- newPropsParameters(plpData, parameters, modelName)
+
+  plpModel<- makeModel(parameters, modelName)
+  newprops<- PatientLevelPrediction::predictPlp(plpModel, plpData,plpData$cohorts)
+
   obsfreq<- c()
   for(i in 1:noSimulations){
     newout <- newOutcomes(noPersons ,newprops )

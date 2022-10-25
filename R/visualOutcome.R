@@ -13,7 +13,10 @@ visualOutcome <- function( plpData,
                            noSimulations,
                            noPersons,
                            parameters ){
-  newprops<- newPropsParameters(  plpData, parameters, "logistic")
+
+  plpModel <- makeModel(parameters, "logistic")
+  newprops <- PatientLevelPrediction::predictPlp(plpModel, plpData, plpData$cohorts)
+
   obsfreq<- c()
   for(i in 1:noSimulations){
     newout <- newOutcomes(noPersons ,newprops )

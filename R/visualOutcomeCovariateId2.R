@@ -19,9 +19,10 @@ visualOutcomeCovariateId2 <- function(
                      modelName
                      ){
   # we will generate new outcome only from persons who have a specific covariate
+  plpModel<- makeModel(parameters,modelName)
+  newprops<- PatientLevelPrediction::predictPlp(plpModel, plpData,plpData$cohorts)
 
-
-  newprops<- newPropsParameters(plpData, parameters, modelName)
+  #newprops<- newPropsParameters(plpData, parameters, modelName)
   obsfreq<- c()
   indexesWithCovariate <- (plpData$covariateData$covariates %>%
                           filter(covariateId == restrictToCovariateId)%>%
@@ -29,7 +30,7 @@ visualOutcomeCovariateId2 <- function(
 
   for(i in 1:noSimulations){
     index <-  sample(indexesWithCovariate, noPersons, replace=T)
-    newoutcomes <- stats::rbinom(noPersons, 1, newprops[index,1])
+    newoutcomes <- stats::rbinom(noPersons, 1, newprops[index,'value'])
 
     newout <- data.frame(rowId = index, newOutcomes= newoutcomes )
     obs <- sum(newoutcomes)/noPersons

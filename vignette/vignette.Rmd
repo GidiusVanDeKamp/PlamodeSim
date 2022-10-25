@@ -1,0 +1,236 @@
+---
+title: "vignette"
+output: html_vignette
+date: "2022-10-19"
+---
+
+```{r,begin , include= F}
+library(dplyr) 
+#this section can be skipped if one is familiar with the Patient Level Prediction package
+#### loading the datasets #####
+connectionDetails <- Eunomia::getEunomiaConnectionDetails()
+
+# create the database
+Eunomia::createCohorts(
+  connectionDetails = connectionDetails,
+  cdmDatabaseSchema = 'main',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort'
+)
+
+# Points PatientLevelPredictionPackage to the Eunomia database
+# Tells Eunomia to extract the cohort stored with id = 4 as the target cohort
+# and cohort with id = 3 as the outcome cohort. The other settings (...Schema)
+# tell the database where to look for the target and the outcome cohorts
+
+databaseDetails <- PatientLevelPrediction::createDatabaseDetails(
+  connectionDetails = connectionDetails,
+  cdmDatabaseId = "eunomia",
+  cdmDatabaseSchema = 'main',
+  cdmDatabaseName = 'Eunomia',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort',
+  target = 4,
+  outcomeDatabaseSchema = 'main',
+  outcomeTable = 'cohort',
+  outcomeId = 3,
+  cdmVersion = 5
+)
+
+# Use ?FeatureExtraction::createCovariateSettings to see what the options are
+# There are a lot...
+covariateSettings <- FeatureExtraction::createCovariateSettings(
+  useDemographicsGender = TRUE,
+  useDemographicsAgeGroup = TRUE,
+  useConditionGroupEraLongTerm = TRUE,
+  useDrugGroupEraLongTerm = TRUE,
+  endDays = -1,
+  longTermStartDays = -365
+)
+
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  studyStartDate = '20000101',
+  studyEndDate = '20200101',
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+# issue with studyStartDate/studyEndDate
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+plpData <- PatientLevelPrediction::getPlpData(
+  databaseDetails = databaseDetails,
+  covariateSettings = covariateSettings,
+  restrictPlpDataSettings = restrictPlpDataSettings
+)
+
+populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
+  binary = T,
+  includeAllOutcomes = FALSE,
+  firstExposureOnly = T,
+  washoutPeriod = 180,
+  removeSubjectsWithPriorOutcome = FALSE,
+  priorOutcomeLookback = 99999,
+  requireTimeAtRisk = TRUE,
+  minTimeAtRisk = 364,
+  riskWindowStart = 1,
+  startAnchor = 'cohort start',
+  riskWindowEnd = 365,
+  endAnchor = 'cohort start'
+)
+
+# split into 25% test and 75% training data, use 3-fold cross validation
+# random split but keep outcome rate the same in test/train
+splitSettings <- PatientLevelPrediction::createDefaultSplitSetting(
+  testFraction = 0.25,
+  trainFraction = 0.75,
+  splitSeed = 123,
+  nfold = 3,
+  type = 'stratified'
+)
+
+# do no sampling
+sampleSettings <- PatientLevelPrediction::createSampleSettings(
+  type = 'none'
+)
+
+# do no feature engineering
+featureEngineeringSettings <- PatientLevelPrediction::createFeatureEngineeringSettings(
+  type = 'none'
+)
+
+# normalize features and remove any redundant ones
+preprocessSettings <- PatientLevelPrediction::createPreprocessSettings(
+  minFraction = 0,
+  normalize = TRUE,
+  removeRedundancy = TRUE
+)
+
+# This sets how detailed the log file (how things went) will be
+# Not important but required. Leave it as is
+logSettings <- PatientLevelPrediction::createLogSettings(verbosity = 'INFO')
+
+executeSettings <- PatientLevelPrediction::createExecuteSettings(
+  runSplitData = TRUE,
+  runSampleData = FALSE,
+  runfeatureEngineering = FALSE,
+  runPreprocessData = TRUE,
+  runModelDevelopment = TRUE,
+  runCovariateSummary = TRUE
+)
+
+# use default LASSO logistic regression
+modelSettings <- PatientLevelPrediction::setLassoLogisticRegression()
+#modelSettings <- PatientLevelPrediction::setCoxModel()
+
+
+
+# You need to define the directory to save the model (saveDirectory)
+runPlp <- PatientLevelPrediction::runPlp(
+  plpData = plpData,
+  outcomeId = 3,
+  analysisId = 'plp_demo',
+  analysisName = 'Demonstrating the plp v5.0.0',
+  populationSettings = populationSettings,
+  splitSettings = splitSettings,
+  sampleSettings = sampleSettings,
+  featureEngineeringSettings = featureEngineeringSettings,
+  preprocessSettings = preprocessSettings,
+  modelSettings = modelSettings,
+  logSettings = logSettings,
+  executeSettings = executeSettings,
+  saveDirectory = "~/R/internshipErasmusMC/simulate-new-patients-outcomes"
+)
+
+plpResult <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demo/plpResult")
+prediction <- plpResult$prediction %>% dplyr::filter(evaluationType == "Test")
+
+
+#savePlpData(plpData,"~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demo/plpData" )
+# plpData<- PatientLevelPrediction::loadPlpData("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demo/plpData" )
+
+
+
+```
+
+## installing plasmodeSim using remotes
+To install using `remotes` run:
+```{r, install, eval=F}
+install.packages("remotes")
+remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
+```
+
+
+## Setting up
+This documents skips some parts, we have skipped the steps to obtain the plpResults and the plpData. 
+
+We begin by loading the package, together with the package `PatientLevelPrediction`, since the package `PlasmodeSim` is designed to be used with `PatientLevelPrediction`.
+
+```{r, settingup }
+library(PlasmodeSim)
+library(PatientLevelPrediction)
+
+```
+In this file we will show which functions are in the `PatientLevelPrediction` package, by adding the unrequired `PatientLevelPrediction::` before the function. 
+
+## Example 1
+
+In this example we obtain new outcomes of a fitted logistic model.
+```{r, ex1, message=F}
+plpModel <- plpResult$model
+newprobs <- PatientLevelPrediction::predictPlp(plpModel, plpData, plpData$cohorts)
+```` 
+The function predictPlp returned this information. 
+
+`````{r}
+newOut <- newOutcomes(200, newprobs)
+head(newOut)
+````
+In the output of newOut patients are drawed randomly with the same chance, the patients could be drawed multiple times. If this happens they can have a different outcome. The function `newOutcomes` needs a data set where the column that contains the probabilities is called `value`.
+
+## Example 2 
+We here we show how to simulate new outcomes from an unfitted logistic model.
+
+````{R, ex2,message=F } 
+Parameters <- plpResult$model$model$coefficients
+UnfittedParameters <- Parameters
+UnfittedParameters[1,1] <- -0.4
+UnfittedParameters[2:4,1] <- 0.4
+head(UnfittedParameters)
+````
+For the logistic model it is necessary that the parameters are stored in a dataset with a column called `betas` and a column called `covariateIds`.  
+
+````{r,message=F}
+plpModelunfitted <- makeModel(UnfittedParameters, "logistic")
+newprobs <- PatientLevelPrediction::predictPlp(plpModelunfitted, plpData,plpData$cohorts)
+newOut <- newOutcomes(200, newprobs)
+````
+
+
+## Visual simulations
+the function `visualOutcome` simulated new data and then plots the frequency of the outcome.
+right now the function `visualOutcome` only works for a logistic model.
+````{r, visual, message= F, out.width = "100%"}
+visualOutcome(plpData,50,200,Parameters)
+visualOutcome(plpData,50,200,UnfittedParameters)
+````
+Here we have plotted 50 times the frequency of the outcome for a simulated dataset with 200 people. 
+
+## Visual of a specific covariate
+
+`````{r, visual2, message= F, out.width = "100%"}
+
+covariateIdToStudy<- plpResult$covariateSummary$covariateId[3]
+UnfittedParameters[3,]
+
+visualOutcomeCovariateId(plpData, covariateIdToStudy, 20, 200, UnfittedParameters, "logistic")
+visualOutcomeCovariateId2(plpData, covariateIdToStudy, 20, 200, UnfittedParameters, "logistic")
+
+````
+As one can see `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are very similiar, they both calculate and plot the frequency for a group with a specific covariate present. The small difference is that `visualOutcomeCovariateId` filters a simulated outcome set to only keep the ones where the covariate is present, and `visualOutcomeCovariateId2` only simulates from patients that have the covariate present. 
+we see they are almost the identical only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are bigger.
+
+
