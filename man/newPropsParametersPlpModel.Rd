@@ -4,17 +4,17 @@
 \alias{newPropsParametersPlpModel}
 \title{simulate a new outcome}
 \usage{
-newPropsParametersPlpModel(plpModel, plpData)
+newPropsParametersPlpModel(plpModel, plpData, time = 10)
 }
 \arguments{
+\item{plpModel}{a data that has the type of model and the parameters and more that i dont quite understand.}
+
 \item{plpData}{a data set like the type used for plp}
 
-\item{plpResult}{a data set returned by plp}
-
-\item{parameters}{a data set like the type used for plp}
+\item{time}{time for which the probabilites are calculated}
 }
 \value{
-returns a dataframe with probabilites
+returns a data frame with probabilities
 }
 \description{
 simulate a new outcome

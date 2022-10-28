@@ -27,8 +27,8 @@ visualOutcome <- function( plpData,
 
 
   part <- plpData$outcomes %>%
-          filter( outcomeId== 3) %>%
-          count() %>%
+          dplyr::filter( outcomeId== 3) %>%
+          dplyr::count() %>%
           as.integer()
 
   total <- length(plpData$cohorts$targetId)

@@ -11,9 +11,9 @@ visualOutcome(plpData, noSimulations, noPersons, parameters)
 
 \item{noSimulations}{number of simulations}
 
-\item{noPersons}{number of persons}
+\item{noPersons}{number of persons in each simulation}
 
-\item{parameters}{a data set like the type used for plp}
+\item{parameters}{a data set with parameters like the type used for plp}
 }
 \value{
 returns a histogram for the frequencies of the outcome

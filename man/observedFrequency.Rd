@@ -9,13 +9,12 @@ observedFrequency(data, plpData, studyCovariateId)
 \arguments{
 \item{data}{A data set as returned by newOutcomes}
 
-\item{plpData}{a dataset}
+\item{plpData}{a data set like the type used for plp}
 
-\item{studyCovariateId}{the covariateId of the to study covariate}
+\item{studyCovariateId}{the covariateId of the covariate for wich the frequency is wanted}
 }
 \value{
-returns a vector with length of number of simulations with the frequency
-of the outcome for the pasients with covariate of the specified covariateId
+the frequency of the outcome for the patients with the specified covariateId present
 }
 \description{
 simulate a new outcome

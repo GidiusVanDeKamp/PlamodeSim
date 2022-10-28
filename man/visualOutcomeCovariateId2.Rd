@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualOutcomeCovariateId2.R
 \name{visualOutcomeCovariateId2}
 \alias{visualOutcomeCovariateId2}
-\title{simulate a new outcome}
+\title{visual for a covariate}
 \usage{
 visualOutcomeCovariateId2(
   plpData,
@@ -14,21 +14,21 @@ visualOutcomeCovariateId2(
 )
 }
 \arguments{
-\item{plpData}{a data set like the type used for plp}
+\item{plpData}{a data set like the type used in PatientLevelPredict}
+
+\item{restrictToCovariateId}{a number, the covariateId of covariate to restrict to.}
 
 \item{noSimulations}{number of simulations}
 
-\item{noPersons}{number of persons}
+\item{noPersons}{number of persons in each simulation}
 
-\item{parameters}{a data set like the type used for plp}
+\item{parameters}{a data set with parameters like the type used for plp}
 
-\item{plpResult}{a data set returned by plp}
-
-\item{studyCovariateId}{a number, the covariateId of the to study covariate}
+\item{modelName}{a string with the type of model.}
 }
 \value{
-returns a histogram for the frequencies of the outcome
+returns a histogram for the frequencies of the outcome there is only simulated from patients that have the given covariate Id.
 }
 \description{
-simulate a new outcome
+visual for a covariate
 }

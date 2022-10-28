@@ -1,13 +1,13 @@
 #' makes an not fitted model
 #'
 #'
-#' @param props a vector with the probabilities order by rowId
-#' @param noPersons number of persons in the returned data set
+#' @param parameters data set with parameters with rows called betas and covariateIds
+#' @param modelname number of persons in the returned data set
 #'
 #' @return returns a dataframe with newOutcomes and subjectId
 #' @export
 #'
-makeModel<- function( parameters , modelname = "logistic"){
+makeModel<- function( parameters, modelname = "logistic"){
   covariateImportance <- ""
   trainDetails  <-""
   modelDesign  <- ""

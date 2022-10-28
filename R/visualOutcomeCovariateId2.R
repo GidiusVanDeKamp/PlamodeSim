@@ -1,3 +1,4 @@
+#'visual for a covariate
 #'
 #' @param plpData a data set like the type used in PatientLevelPredict
 #' @param restrictToCovariateId a number, the covariateId of covariate to restrict to.
@@ -22,8 +23,8 @@ visualOutcomeCovariateId2 <- function(
 
   obsfreq<- c()
   indexesWithCovariate <- (plpData$covariateData$covariates %>%
-                          filter(covariateId == restrictToCovariateId)%>%
-                          collect())$rowId
+                          dplyr::filter(.data$covariateId == restrictToCovariateId)%>%
+                          dplyr::collect())$rowId
 
   for(i in 1:noSimulations){
     index <-  sample(indexesWithCovariate, noPersons, replace=T)
@@ -35,11 +36,11 @@ visualOutcomeCovariateId2 <- function(
                append(obs)
 
   }
-  obsfreq <- data.frame(freq= obsfreq)
+  obsfreq <- data.frame(freq = obsfreq)
   plotGreenLine <- greenLine(plpResult,
                              restrictToCovariateId,3)
 
-  indexstudycov<- which(restrictToCovariateId==plpResult$covariateSummary$covariateId )
+  #indexstudycov<- which(restrictToCovariateId== plpResult$covariateSummary$covariateId )
 
 
   ggplot2::ggplot(obsfreq, ggplot2::aes(freq))+

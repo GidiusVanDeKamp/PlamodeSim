@@ -9,7 +9,7 @@ newOutcomes(noPersons, props)
 \arguments{
 \item{noPersons}{number of persons in the returned data set}
 
-\item{props}{a vector with the probabilities order by rowId}
+\item{props}{a vector with the probabilities ordered by rowId}
 }
 \value{
 returns a dataframe with newOutcomes and subjectId

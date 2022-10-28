@@ -1,3 +1,4 @@
+#' Breslow estimator
 #'
 #' @param plpData a data set like the type used with plp
 #' @param timeInDays time in days
@@ -10,24 +11,26 @@
 #'
 breslowEstimator <- function(plpData,   # how will i cheack this function?
                              timeInDays,
-                             parameters
-                                  ){
+                             parameters ){
 
   setPatientsAtRisk <- plpData$outcomes %>%
-                      dplyr::filter(daysToEvent <= timeInDays )
+                      dplyr::filter(daysToEvent >= timeInDays )
+  setPatientsWithSometing <- plpData$outcomes %>%
+    dplyr::filter(daysToEvent <= timeInDays )
 
-  RxjDay <- min(setPatientsAtRisk$daysToEvent)
+
+  RxjDay <- min(setPatientsWithSometing$daysToEvent)
 
   #make first the exp beta Z for all in the rowId then later use these in the sums of sums.
   indexParamNonZero <- (parameters$betas != 0)%>%
                         which()
-  BetaZ <- rep(0,max(plpData$cohorts$rowId) )
+  BetaZ <- rep(0, max(plpData$cohorts$rowId) )
 
-  for(i in 2:length(indexParamNonZero)){
+  for(i in 1:length(indexParamNonZero)){
     indexes <- (plpData$covariateData$covariates %>%
-               filter(covariateId ==!! as.numeric(parameters[indexParamNonZero[i],2] ))%>%
-                select( rowId) %>%
-                collect())$rowId
+                dplyr::filter(covariateId ==!! as.numeric(parameters[indexParamNonZero[i],2] ))%>%
+                dplyr::select( rowId) %>%
+                dplyr::collect())$rowId
 
     BetaZ[indexes ] <-   BetaZ[indexes] + as.numeric(parameters[indexParamNonZero[i],1])
   }
@@ -36,13 +39,13 @@ breslowEstimator <- function(plpData,   # how will i cheack this function?
   Estimator <- 0
   while(RxjDay < timeInDays){ #is this < correct? or <=??
 
-    RxjDay <- setPatientsAtRisk %>%
-              filter( daysToEvent > RxjDay) %>%
-              select( daysToEvent ) %>%
+    RxjDay <- setPatientsWithSometing %>%
+              dplyr::filter( daysToEvent > RxjDay) %>%
+              dplyr::select( daysToEvent ) %>%
               min()
     sumexpId <- (plpData$outcomes %>%
                 dplyr::filter(daysToEvent > RxjDay) %>%
-                select(rowId))$rowId
+                dplyr::select(rowId))$rowId
 
     #return(sumexpId)
     Estimator <- Estimator+ 1/(sum(expBetaZ[sumexpId]))

@@ -1,5 +1,7 @@
+#' visual for a covariate
+#'
 #' @param plpData a data set like the type used in PatientLevelPredict
-#' @param restrictToCovariateId a number, the covariateId of covariate to restrict to.
+#' @param studyCovariateId a number, the covariateId of covariate to restrict to.
 #' @param noSimulations number of simulations
 #' @param noPersons number of persons in each simulation
 #' @param parameters a data set with parameters like the type used for plp

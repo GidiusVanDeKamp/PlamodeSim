@@ -7,9 +7,9 @@
 makeModel(parameters, modelname = "logistic")
 }
 \arguments{
-\item{props}{a vector with the probabilities order by rowId}
+\item{parameters}{data set with parameters with rows called betas and covariateIds}
 
-\item{noPersons}{number of persons in the returned data set}
+\item{modelname}{number of persons in the returned data set}
 }
 \value{
 returns a dataframe with newOutcomes and subjectId
