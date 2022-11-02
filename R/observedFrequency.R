@@ -15,7 +15,7 @@ observedFrequency <- function( data, plpData, studyCovariateId ){
                     dplyr::select(rowId))[[1]]
 
   withOutcomeAndCovariate <- (plpData$covariateData$covariates %>%
-                             dplyr::filter( rowId %in% indexOutcome, covariateId == studyCovariateId )%>%
+                             dplyr::filter( .data$rowId %in% indexOutcome, .data$covariateId == studyCovariateId )%>%
                                dplyr::collect()
                              )$rowId %>%
                              unique() %>%
@@ -23,7 +23,7 @@ observedFrequency <- function( data, plpData, studyCovariateId ){
 
 
   withCovariate  <- (plpData$covariateData$covariates %>%
-                    dplyr::filter( rowId %in% !!data$rowId, covariateId == studyCovariateId )%>%
+                    dplyr::filter( .data$rowId %in% !!data$rowId, .data$covariateId == studyCovariateId )%>%
                       dplyr::collect())$rowId %>%
                     unique() %>%
                     length() %>%

@@ -14,7 +14,7 @@ visualOutcome <- function( plpData,
                            noPersons,
                            parameters ){
 
-  plpModel <- makeModel(parameters, "logistic")
+  plpModel <- makeLogisticModel(parameters)
   newprops <- PatientLevelPrediction::predictPlp(plpModel, plpData, plpData$cohorts)
 
   obsfreq<- c()
@@ -24,7 +24,6 @@ visualOutcome <- function( plpData,
       append(sum(newout$newOutcomes)/ noPersons)
   }
   obsfreq= data.frame('obsfreq'= obsfreq)
-
 
   part <- plpData$outcomes %>%
           dplyr::filter( outcomeId== 3) %>%

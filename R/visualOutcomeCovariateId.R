@@ -15,11 +15,10 @@ visualOutcomeCovariateId <- function(
                      studyCovariateId,
                      noSimulations,
                      noPersons,
-                     parameters,
-                     modelName
+                     parameters
                      ){
 
-  plpModel<- makeModel(parameters, modelName)
+  plpModel<- makeLogisticModel(parameters)
   newprops<- PatientLevelPrediction::predictPlp(plpModel, plpData,plpData$cohorts)
 
   obsfreq<- c()
@@ -30,10 +29,10 @@ visualOutcomeCovariateId <- function(
 
   }
   obsfreq <- data.frame(freq= obsfreq)
-  plotGreenLine <- greenLine(plpResult,
+  plotGreenLine <- greenLine(plpData,
                              studyCovariateId,3)
 
-  indexstudycov<- which(studyCovariateId==plpResult$covariateSummary$covariateId )
+  #indexstudycov<- which(studyCovariateId==plpResult$covariateSummary$covariateId )
 
   ggplot2::ggplot(obsfreq, ggplot2::aes(freq))+
   ggplot2::geom_histogram(binwidth=0.05)+
@@ -49,7 +48,7 @@ visualOutcomeCovariateId <- function(
     "persons."))
 
   }
-greenLine <- function(plpResult,
+greenLine <- function(plpData,
                       studyCovariateId,
                       youroutcomeId){
 

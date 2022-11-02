@@ -9,14 +9,29 @@
 #' @export
 #'
 #'
-newOutcomesCensoredSurvivalTimes <- function( propMatrix,propMatrixCensoring, number, uniqueTimes){
-  index <-  sample(1:dim(propMatrix)[1], number, replace=T)
+# change this fucntion so it looks more like newOutcomesSurvivalTimes.
+newOutcomesCensoredSurvivalTimes <- function( plpModelCensoring, expbetasCensor, plpModel, expbetas, number){
+  index <-  sample(1:length(expbetas), number, replace=T)
+
   uniformSample <- stats::runif(number)
   uniformSampleCensoring <- stats::runif(number)
 
-  outcomes<-  uniqueTimes[rowSums(((propMatrix[index,]>uniformSample)*1))]
+  baselineSurv <- plpModel$model$baselineHazard$surv
+  baselineSurvCensor <- plpModelCensoring$model$baselineHazard$surv
 
-  censorTimes<- uniqueTimes[rowSums((propMatrixCensoring[index,]>uniformSampleCensoring)*1)]
+  baselineTimes       <- plpModel$model$baselineHazard$time
+  baselineTimesCensor <- plpModelCensoring$model$baselineHazard$time
+
+  props<- matrix(0,number,length(plpModel$model$baselineHazard$surv))
+  propsCensoring <- matrix(0,number,length(plpModelCensoring$model$baselineHazard$surv))
+
+  for( i in 1:number){
+    props[i,]<- plpModel$model$baselineHazard$surv^expbetas[index[i]]
+    propsCensoring[i,]<- plpModel$model$baselineHazard$surv^expbetasCensor[index[i]]
+  }
+
+  outcomes    <-  baselineTimes[rowSums(((props>uniformSample)*1))]
+  censorTimes <-  baselineTimesCensor[rowSums((propsCensoring>uniformSampleCensoring)*1)]
 
   Woutcome <- (outcomes< censorTimes) %>%
               which()

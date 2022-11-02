@@ -1,19 +1,28 @@
 #'simulating of a survival time
 #'
-#' @param propMatrix matrix with the probabailies
+#' @param plpModel model with
 #' @param number number of people to draw.
-#' @param uniqueTimes vector with the possible outcome times.
+#' @param expbetas expbetas.
 #'
 #' @return returns a data set with new outcomes
 #' @export
 #'
 #'
-newOutcomesSurvivalTimes <- function( propMatrix, number, uniqueTimes){
-  index <-  sample(1:dim(propMatrix)[1], number, replace=T)
+newOutcomesSurvivalTimes <- function( plpModel, expbetas, number){
+
+  index <-  sample(1:length(expbetas)[1], number, replace=T)
   uniformSample <- stats::runif(number)
 
-  outcome <- uniqueTimes[rowSums((propMatrix[index,]>uniformSample)*1)]
+  baselineSurv <- plpModel$model$baselineHazard$surv
+  baselineTimes <- plpModel$model$baselineHazard$time
 
-  data.frame(outcome = outcome, rowId = index  ) %>%
+  props<- matrix(0,number,length(plpModel$model$baselineHazard$surv))
+  for( i in 1:number){
+    props[i,]<- plpModel$model$baselineHazard$surv^expbetas[index[i]]
+  }
+
+  outcomeTimes <- baselineTimes[rowSums((props>uniformSample)*1)]
+
+  data.frame(outcome = outcomeTimes, rowId = index  ) %>%  # fails when something fails before the first time in baselinehazard.
   return()
 }

@@ -4,14 +4,14 @@
 \alias{newOutcomesSurvivalTimes}
 \title{simulating of a survival time}
 \usage{
-newOutcomesSurvivalTimes(propMatrix, number, uniqueTimes)
+newOutcomesSurvivalTimes(plpModel, expbetas, number)
 }
 \arguments{
-\item{propMatrix}{matrix with the probabailies}
+\item{plpModel}{model with}
+
+\item{expbetas}{expbetas.}
 
 \item{number}{number of people to draw.}
-
-\item{uniqueTimes}{vector with the possible outcome times.}
 }
 \value{
 returns a data set with new outcomes

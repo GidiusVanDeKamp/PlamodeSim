@@ -7,7 +7,8 @@
 #' @return returns the Breslow estimator
 #' @export
 #'
-#'
+#' @importFrom rlang .data
+
 newPropsCox <- function(plpModel,
                         plpData,
                         timeInDays){
@@ -21,8 +22,8 @@ newPropsCox <- function(plpModel,
 
   for(i in 1:length(indexParamNonZero)){
     indexes <- (plpData$covariateData$covariates %>%
-                  dplyr::filter(covariateId ==!! as.numeric(plpModel$model$coefficients[indexParamNonZero[i],2] ))%>%
-                  dplyr::select( rowId) %>%
+                  dplyr::filter(.data$covariateId ==!! as.numeric(plpModel$model$coefficients[indexParamNonZero[i],2] ))%>%
+                  dplyr::select( .data$rowId) %>%
                   dplyr::collect())$rowId
 
     BetaZ[indexes] <- BetaZ[indexes]+  as.numeric(plpModel$model$coefficients[indexParamNonZero[i],1])

@@ -16,8 +16,8 @@ newPropsCoxversion2 <- function(plpModel,
 
   for(i in 1:length(indexParamNonZero)){
     indexes <-    (plpData$covariateData$covariates %>%
-                  dplyr::filter(covariateId ==!! as.numeric(parameters[indexParamNonZero[i],2] ))%>%
-                  dplyr::select( rowId) %>%
+                  dplyr::filter(.data$covariateId ==!! as.numeric(parameters[indexParamNonZero[i],2] ))%>%
+                  dplyr::select( .data$rowId) %>%
                   dplyr::collect())$rowId
 
     BetaZ[indexes ] <-   BetaZ[indexes] + as.numeric(parameters[indexParamNonZero[i],1])

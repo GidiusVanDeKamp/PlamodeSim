@@ -2,12 +2,11 @@
 #'
 #'
 #' @param parameters data set with parameters with rows called betas and covariateIds
-#' @param modelname number of persons in the returned data set
 #'
-#' @return returns a dataframe with newOutcomes and subjectId
+#' @return returns a 'fake' model
 #' @export
 #'
-makeModel<- function( parameters, modelname = "logistic"){
+makeLogisticModel<- function( parameters){
   covariateImportance <- ""
   trainDetails  <-""
   modelDesign  <- ""
@@ -15,7 +14,7 @@ makeModel<- function( parameters, modelname = "logistic"){
 
   normFactors <- data.frame(covariateId = covariateId, maxValue = rep(1,length(parameters[1])))
   preprocessing  <- list(featureEngineering= NULL,tidyCovariates= list(normFactors=normFactors ) ) # cannot be zero
-  model <- list(modelType= modelname, coefficients= parameters)
+  model <- list(modelType= "logistic", coefficients= parameters)
 
   mademod <- list(covariateImportance= covariateImportance,
                   trainDetails= trainDetails,

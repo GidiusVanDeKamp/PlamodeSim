@@ -15,10 +15,9 @@ visualOutcomeCovariateId2 <- function(
                      restrictToCovariateId,
                      noSimulations,
                      noPersons,
-                     parameters,
-                     modelName
+                     parameters
                      ){
-  plpModel<- makeModel(parameters,modelName)
+  plpModel<- makeLogisticModel(parameters)
   newprops<- PatientLevelPrediction::predictPlp(plpModel, plpData,plpData$cohorts)
 
   obsfreq<- c()
@@ -37,7 +36,7 @@ visualOutcomeCovariateId2 <- function(
 
   }
   obsfreq <- data.frame(freq = obsfreq)
-  plotGreenLine <- greenLine(plpResult,
+  plotGreenLine <- greenLine(plpData,
                              restrictToCovariateId,3)
 
   #indexstudycov<- which(restrictToCovariateId== plpResult$covariateSummary$covariateId )

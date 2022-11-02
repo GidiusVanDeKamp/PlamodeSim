@@ -8,13 +8,14 @@
 #' @return returns the Breslow estimator
 #' @export
 #'
+#' @importFrom rlang .data
 #'
 breslowEstimator <- function(plpData,   # how will i cheack this function?
                              timeInDays,
-                             parameters ){
+                             parameters){
 
   setPatientsAtRisk <- plpData$outcomes %>%
-                      dplyr::filter(daysToEvent >= timeInDays )
+                      dplyr::filter(.data$daysToEvent >= timeInDays )
   setPatientsWithSometing <- plpData$outcomes %>%
     dplyr::filter(daysToEvent <= timeInDays )
 
@@ -28,8 +29,8 @@ breslowEstimator <- function(plpData,   # how will i cheack this function?
 
   for(i in 1:length(indexParamNonZero)){
     indexes <- (plpData$covariateData$covariates %>%
-                dplyr::filter(covariateId ==!! as.numeric(parameters[indexParamNonZero[i],2] ))%>%
-                dplyr::select( rowId) %>%
+                dplyr::filter(.data$covariateId ==!! as.numeric(parameters[indexParamNonZero[i],2] ))%>%
+                dplyr::select( .data$rowId) %>%
                 dplyr::collect())$rowId
 
     BetaZ[indexes ] <-   BetaZ[indexes] + as.numeric(parameters[indexParamNonZero[i],1])
@@ -45,7 +46,7 @@ breslowEstimator <- function(plpData,   # how will i cheack this function?
               min()
     sumexpId <- (plpData$outcomes %>%
                 dplyr::filter(daysToEvent > RxjDay) %>%
-                dplyr::select(rowId))$rowId
+                dplyr::select(.data$rowId))$rowId
 
     #return(sumexpId)
     Estimator <- Estimator+ 1/(sum(expBetaZ[sumexpId]))

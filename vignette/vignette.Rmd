@@ -1,6 +1,6 @@
 ---
 title: "vignette PlasmodeSim"
-output: html_vignette
+output: pdf_document
 date: "2022-10-19"
 ---
 Welcome to the vignette about the R package PlasmodeSim. This package is still under development.
@@ -30,8 +30,7 @@ library(PatientLevelPrediction)
 
 modelSettings <- PatientLevelPrediction::setLassoLogisticRegression()
 
-plpResult <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demolog/plpResult")
-prediction <- plpResult$prediction %>% dplyr::filter(evaluationType == "Test")
+plpResultLogistic <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demolog/plpResult")
 
 plpData<- PatientLevelPrediction::loadPlpData("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demo/plpData" )
 ````
@@ -40,14 +39,14 @@ In this file we will show which functions are in the `PatientLevelPrediction` pa
 ## Example 1
 
 In this example we obtain new outcomes of a fitted logistic model.
-```{r, ex1, message=F}
-plpModel <- plpResult$model
-newprobs <- PatientLevelPrediction::predictPlp(plpModel, plpData, plpData$cohorts)
+````{r, ex1, message=F}
+plpModelLog <- plpResultLogistic$model
+probabilites <- newPropsParametersPlpModel(plpModelLog, plpData, plpData$cohorts)
 ```` 
 The function predictPlp returned this information. 
 
-`````{r}
-newOut <- newOutcomes(200, newprobs)
+````{r}
+newOut <- newOutcomes(200, probabilites)
 head(newOut)
 
 ````
@@ -57,7 +56,7 @@ In the output of newOut patients are drawed randomly with the same chance, the p
 We here we show how to simulate new outcomes from an unfitted logistic model.
 
 ````{R, ex2,message=F } 
-Parameters <- plpResult$model$model$coefficients
+Parameters <- plpModelLog$model$coefficients
 UnfittedParameters <- Parameters
 UnfittedParameters[1,1] <- -0.4
 UnfittedParameters[2:4,1] <- 0.4
@@ -66,7 +65,7 @@ head(UnfittedParameters)
 For the logistic model it is necessary that the parameters are stored in a dataset with a column called `betas` and a column called `covariateIds`.  
 
 ````{r,message=F}
-plpModelunfitted <- makeModel(UnfittedParameters, "logistic")
+plpModelunfitted <- makeLogisticModel(UnfittedParameters)
 newprobs <- PatientLevelPrediction::predictPlp(plpModelunfitted, plpData,plpData$cohorts)
 newOut <- newOutcomes(200, newprobs)
 head(newOut)
@@ -76,7 +75,7 @@ head(newOut)
 
 ## Visual simulations
 The function `visualOutcome` simulated new data and then plots the frequency of the outcome.
-Right now the function `visualOutcome` only works for a logistic model. The green line in the plots is the avegate outcome in the original dataset. 
+Right now the function `visualOutcome` only works for a logistic model. The green line in the plots is the average outcome in the original dataset. 
 ````{r, visual, message= F, out.width = "60%"}
 visualOutcome(plpData,50,200,Parameters)
 visualOutcome(plpData,50,200,UnfittedParameters)
@@ -85,13 +84,13 @@ Here we have plotted 50 times the frequency of the outcome for a simulated datas
 
 ## Visual of a specific covariate
 
-`````{r, visual2, message= F, out.width = "60%"}
+````{r, visual2, message= F, out.width = "60%"}
 
-covariateIdToStudy<- plpResult$covariateSummary$covariateId[3]
+covariateIdToStudy<- plpResultLogistic$covariateSummary$covariateId[3]
 UnfittedParameters[3,]
 
-visualOutcomeCovariateId(plpData, covariateIdToStudy, 20, 200, UnfittedParameters, "logistic")
-visualOutcomeCovariateId2(plpData, covariateIdToStudy, 20, 200, UnfittedParameters, "logistic")
+visualOutcomeCovariateId(plpData, covariateIdToStudy, 20, 200, UnfittedParameters)
+visualOutcomeCovariateId2(plpData, covariateIdToStudy, 20, 200, UnfittedParameters)
 
 ````
 
@@ -100,9 +99,7 @@ We see they are almost the identical only `visualOutcomeCovariateId2` is spread 
 
 ## survival times outcomes. 
 
-We have to think about how to design this.
-For simulating the survival times we need more than one probability, we use something like the **CDF**. 
-When using `newPropsCoxversion2(plpModel, plpData)` we obtain a matrix of size *population size* by *number of unique times of the realizations* and a vector of length  *number of unique times of the realizations*. In the matrix we store the probabilities of surviving upto the times stored in the returned vector. 
+For simulating new survival times we need more than one probability, we use the baselinehazard, stored in the plpModel. Now there is a function called `expBetaZ` that returns $\exp(\sum_i \beta_i Z_i)$ where $\beta$ is a vector with the parameters and $Z$ are the covariates of a patients. This could also be included in the function generating new times. (then there would be a posibility that the computer computes things twice, but now maybe it computes expbetaZ's that are never needed). 
 
 ````{r, cox model setup, results= 'hide'}
 modelSettings <- PatientLevelPrediction::setCoxModel()
@@ -113,13 +110,51 @@ plpModel<- plpResult$model
 ````{R, cox model}
 plpModel$trainDetails$modelName
 
-listpropandtime <- newPropsParametersPlpModel(plpModel, plpData)
-newprops <- listpropandtime[[1]]
-posibletimes <- listpropandtime[[2]]
+expbetas <- expBetaZ(plpData, plpModel) 
 
-NewOut <- newOutcomesSurvivalTimes(newprops, 30, posibletimes)
-head(NewOut) # add the rowId's 
+NewOut <- newOutcomesSurvivalTimes(plpModel, expbetas, 20)
+head(NewOut) 
 ````
-To simulate the outcomes we use the function `newOutcomesSurvivalTimes`. 
-Right now this simulation has not added the censored data. also it does not uses the package survival. 
+just as before we have a function to create a dataset that works with the functions.
+````{R, cox with changes}
+newcoefficients <- plpModel$model$coefficients
+newcoefficients[1:3,1]<- 0.4
+
+baselineHazard           <- plpModel$model$baselineHazard$surv[1:45]
+timesinthebaselinehazard <- plpModel$model$baselineHazard$time[1:45]
+tail(timesinthebaselinehazard)
+
+plpChangedCoxModel <- makeCoxModel(newcoefficients, baselineHazard, timesinthebaselinehazard)
+newexpbetas <- expBetaZ(plpData, plpChangedCoxModel) 
+
+NewOut <- newOutcomesSurvivalTimes(plpChangedCoxModel, newexpbetas, 20)
+head(NewOut)
+````
+## To simulated censored data: 
+````{R}
+plpModelCensoring <-  plpModel #here should be a function that returns the correct estimate
+expbetasCensor <-  expbetas #here should be a function that returns the correct values
+
+newCensoredTimes <- newOutcomesCensoredSurvivalTimes(plpModelCensoring, expbetasCensor,
+                                                     plpModel, expbetas, 10)
+head(newCensoredTimes)
+
+````
+## adjusting the baseline
+
+often it is desired to have the same event rate in the newly simulated data as in the original dataset. to do this we have the function `AdjustBaselineSurvival` with this function one can change the baselineSurvival function such that on time `t` the probability is `p`. Because the function `AdjustbaselineSurvival` solves an equation it needs an interval for finding the solution. one can set the event rate 
+
+````{R}
+AdjustedBaseline <- AdjustBaselineSurvival(plpModel$model$baselineHazard,
+                                        66, 1/2, newexpbetas, intervalSolution = c(-100,100))
+
+AdjustedCoxModel <- makeCoxModel(newcoefficients, AdjustedBaseline$surv, AdjustedBaseline$time)
+
+NewOut <- newOutcomesSurvivalTimes(AdjustedCoxModel, newexpbetas, 20)
+
+head(NewOut)
+
+````
+
+
 

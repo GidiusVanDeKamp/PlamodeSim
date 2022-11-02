@@ -9,8 +9,7 @@ visualOutcomeCovariateId2(
   restrictToCovariateId,
   noSimulations,
   noPersons,
-  parameters,
-  modelName
+  parameters
 )
 }
 \arguments{
