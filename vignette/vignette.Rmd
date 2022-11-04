@@ -22,11 +22,8 @@ remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 ## Setting up
 This documents skips some parts, we have skipped the steps to obtain the plpResults and the plpData. 
 
-We begin by loading the package, together with the package `PatientLevelPrediction`, since the package `PlasmodeSim` is designed to be used with `PatientLevelPrediction`.
 ````{r, setup, message= F}
 library(dplyr) 
-#library(PlasmodeSim)
-library(PatientLevelPrediction)
 
 modelSettings <- PatientLevelPrediction::setLassoLogisticRegression()
 
@@ -34,7 +31,6 @@ plpResultLogistic <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmu
 
 plpData<- PatientLevelPrediction::loadPlpData("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demo/plpData" )
 ````
-In this file we will show which functions are in the `PatientLevelPrediction` package, by adding `PatientLevelPrediction::` before the function. 
 
 ## Example 1
 
@@ -71,9 +67,8 @@ newOut <- PlasmodeSim::newOutcomes(200, newprobs)
 head(newOut)
 ````
 
-
-
 ## Visual simulations
+
 The function `visualOutcome` simulated new data and then plots the frequency of the outcome.
 Right now the function `visualOutcome` only works for a logistic model. The green line in the plots is the average outcome in the original dataset. 
 ````{r, visual, message= F, out.width = "60%"}
@@ -99,65 +94,20 @@ We see they are almost the identical only `visualOutcomeCovariateId2` is spread 
 
 ## survival times outcomes. 
 
-For simulating new survival times we need more than one probability, we use the baselinehazard, stored in the plpModel. Now there is a function called `expBetaZ` that returns $\exp(\sum_i \beta_i Z_i)$ where $\beta$ is a vector with the parameters and $Z$ are the covariates of a patients. This could also be included in the function generating new times. (then there would be a posibility that the computer computes things twice, but now maybe it computes expbetaZ's that are never needed). 
+For simulating new survival times we need more than one probability, we use the baselinehazard, stored in the plpModel.
 
 ````{r, cox model setup, results= 'hide'}
 modelSettings <- PatientLevelPrediction::setCoxModel()
 plpResult <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demoCox/plpResult")
 plpModel<- plpResult$model
+
+
+# function that simulates uncensored data,  simulateSurvivaltimes(plpModel, plpData, 20)
 ````
 
-````{R, cox model}
-plpModel$trainDetails$modelName
+## simulation censored survival data
 
-#expbetas <- expBetaZ(plpData, plpModel) 
-#expbetas<-addExpLp(prediction, baselineSurvival)$exp_lp
-
-#NewOut <- newOutcomesSurvivalTimes(plpModel, expbetas, 20)
-#head(NewOut) 
-````
-just as before we have a function to create a dataset that works with the functions.
-````{R, cox with changes}
-# newcoefficients <- plpModel$model$coefficients
-# newcoefficients[1:3,1]<- 0.4
-# 
-# baselineHazard           <- plpModel$model$baselineHazard$surv[1:45]
-# timesinthebaselinehazard <- plpModel$model$baselineHazard$time[1:45]
-# tail(timesinthebaselinehazard)
-# 
-# plpChangedCoxModel <- makeCoxModel(newcoefficients, baselineHazard, timesinthebaselinehazard)
-# newexpbetas <- expBetaZ(plpData, plpChangedCoxModel) 
-# 
-# NewOut <- newOutcomesSurvivalTimes(plpChangedCoxModel, newexpbetas, 20)
-# head(NewOut)
-````
-## To simulated censored data: 
-````{R}
-# plpModelCensoring <-  plpModel #here should be a function that returns the correct estimate
-# expbetasCensor <-  expbetas #here should be a function that returns the correct values
-# 
-# newCensoredTimes <- newOutcomesCensoredSurvivalTimes(plpModelCensoring, expbetasCensor,
-#                                                      plpModel, expbetas, 10)
-# head(newCensoredTimes)
-
-````
-## adjusting the baseline
-
-often it is desired to have the same event rate in the newly simulated data as in the original dataset. to do this we have the function `AdjustBaselineSurvival` with this function one can change the baselineSurvival function such that on time `t` the probability is `p`. Because the function `AdjustbaselineSurvival` solves an equation it needs an interval for finding the solution. one can set the event rate 
-
-````{R}
-# AdjustedBaseline <- AdjustBaselineSurvival(plpModel$model$baselineHazard,
-#                                         66, 1/2, newexpbetas, intervalSolution = c(-100,100))
-# 
-# AdjustedCoxModel <- makeCoxModel(newcoefficients, AdjustedBaseline$surv, AdjustedBaseline$time)
-# 
-# NewOut <- newOutcomesSurvivalTimes(AdjustedCoxModel, newexpbetas, 20)
-# 
-# head(NewOut)
-
-````
-
-## notes 
+first we have to set some settings. 
 ````{R,message= F}
 populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   binary = TRUE,
@@ -201,38 +151,16 @@ preprocessSettings <- PatientLevelPrediction::createPreprocessSettings(
 )
 modelSettings <- PatientLevelPrediction::setCoxModel()
 
-
 ````
-hoi
+now that we have out settings. We define a training set and fit the model. The model acctually consist of two plpModels stored in a list. 
+
 ````{R,message= F }
 TrainingSet <- PlasmodeSim::MakeTraingSet(plpData, executeSettings, populationSettings, splitSettings, sampleSettings, preprocessSettings, featureEngineeringSettings, outcomeId=3)
 
 fitcensor<-  PlasmodeSim::fitCensoring(TrainingSet$Train, modelSettings)
  
-NewOutcomes <- PlasmodeSim::simulateWithCensoring(fitcensor, plpData, populationSettings, 20)
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(fitcensor, plpData, populationSettings, 20)
 head(NewOutcomes)
 
-
-
-# makeCensoringModel(coefficients1, coeffcients2,two baselineHazard) -> returns two models
-# adjust only outcome coefficients function. 
-
 ````
-
-
-
-i think it should be something like this:
-1. one function that fits and predicts, that only returns the exp lp and the models.
-2. 
-
-
-In the end we need 3 things to simulates.
-1. baseline hazard function for the outcomes 
-1. baseline hazard function for the censoring 
-
-2. the exponential of the linear prediction for each patient outcome
-2. the exponential of the linear prediction for each patient censoring
-
-3. the number of outcomes wanted. 
-
 
