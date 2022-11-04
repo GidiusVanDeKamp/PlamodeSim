@@ -10,6 +10,6 @@
 makeCoxModel<- function( coefficients, baselinehazard, timesofbaselinhazard ){
   baselineSurvival <- list(time= timesofbaselinhazard, surv= baselinehazard)
   modelType <- 'cox'
-  model <- list(baselineHazard = baselineSurvival, modelType = modelType, coefficients = coefficients)
+  model <- list(baselineSurvival = baselineSurvival, modelType = modelType, coefficients = coefficients)
   return(list(model=model))
 }

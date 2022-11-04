@@ -161,10 +161,24 @@ now that we have out settings. We define a training set and fit the model. The m
 TrainingSet <- PlasmodeSim::MakeTraingSet(plpData, executeSettings, populationSettings, splitSettings, sampleSettings, preprocessSettings, featureEngineeringSettings, outcomeId=3)
 
 fitcensor <- PlasmodeSim::fitCensoring(TrainingSet$Train, modelSettings)
-head(fitcensor$outcomesModel$prediction$value)
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(fitcensor, plpData, populationSettings, 20)
 head(NewOutcomes)
 
 ````
 
+# Make an unfitted model
+
+````{R, }
+# makeCoxModel. 
+coeff <- plpModel$model$coefficients
+survival <- plpModel$model$baselineSurvival$surv
+times <- plpModel$model$baselineSurvival$time
+
+unfittedmodel <- makeCoxModel(coeff, survival, times)
+
+
+newdata <- PlasmodeSim::simulateSurvivaltimes(unfittedmodel, plpData, 3, populationSettings)
+head(newdata)
+
+````
