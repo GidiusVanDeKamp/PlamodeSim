@@ -27,9 +27,9 @@ library(dplyr)
 
 modelSettings <- PatientLevelPrediction::setLassoLogisticRegression()
 
-plpResultLogistic <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demolog/plpResult")
+plpResultLogistic <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demolog/Result")
 
-plpData<- PatientLevelPrediction::loadPlpData("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demo/plpData" )
+plpData<- PatientLevelPrediction::loadPlpData("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demolog/Data" )
 ````
 
 ## Example 1
@@ -92,24 +92,15 @@ PlasmodeSim::visualOutcomeCovariateId2(plpData, covariateIdToStudy, 20, 200, Unf
 As one can see `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are very similiar, they both calculate and plot the frequency for a group with a specific covariate present. The small difference is that `visualOutcomeCovariateId` filters a newly simulated dataset set to only keep the patients where the covariate is present, and `visualOutcomeCovariateId2` only simulates new outcomes for patients that have the covariate present. 
 We see they are almost the identical only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are bigger.
 
-## survival times outcomes. 
+## Survival times outcomes. 
 
 For simulating new survival times we need more than one probability, we use the baselinehazard, stored in the plpModel.
 
-````{r, cox model setup, results= 'hide'}
-modelSettings <- PatientLevelPrediction::setCoxModel()
-plpResult <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demoCox/plpResult")
-plpModel<- plpResult$model
+````{r, cox model setup, results= 'hide', message= F}
+plpResult <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demoCox/Result")
+plpData <- PatientLevelPrediction::loadPlpData("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demoCox/Data")
+plpModel<- plpResult$model #a fitted Cox model 
 
-newdata <- simulateSurvivaltimes(plpModel, plpData, 3, populationSettings)
-head(newdata)
-# function that simulates uncensored data,  simulateSurvivaltimes(plpModel, plpData, 20)
-````
-
-## simulation censored survival data
-
-first we have to set some settings. 
-````{R,message= F}
 populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   binary = TRUE,
   includeAllOutcomes = FALSE,
@@ -124,6 +115,17 @@ populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   riskWindowEnd = 7300,
   endAnchor = 'cohort start'
 )
+
+newdata <- PlasmodeSim::simulateSurvivaltimes(plpModel, plpData, 3, populationSettings)
+head(newdata)
+# function that simulates uncensored data,  simulateSurvivaltimes(plpModel, plpData, 20)
+````
+
+## Simulation censored survival data
+
+first we have to set some settings. 
+````{R,message= F}
+
 executeSettings <- PatientLevelPrediction::createExecuteSettings(
   runSplitData = TRUE,
   runSampleData = FALSE,
