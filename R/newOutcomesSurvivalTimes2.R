@@ -8,17 +8,17 @@
 #' @export
 #'
 #'
-newOutcomesSurvivalTimes <- function( plpModel, expbetas, number){
+newOutcomesSurvivalTimes2 <- function( plpModel, expbetas, number){
 
   index <-  sample(1:length(expbetas)[1], number, replace=T)
   uniformSample <- stats::runif(number)
 
-  baselineSurv <- plpModel$model$baselineHazard$surv
-  baselineTimes <- plpModel$model$baselineHazard$time
+  baselineSurv <- plpModel$model$baselineSurvival$surv
+  baselineTimes <- plpModel$model$baselineSurvival$time
 
-  props <- matrix(0,number,length(plpModel$model$baselineHazard$surv))
+  props<- matrix(0,number,length(plpModel$model$baselineSurvival$surv))
   for( i in 1:number){
-    props[i,] <- plpModel$model$baselineHazard$surv^expbetas[index[i]]
+    props[i,]<- plpModel$model$baselineSurvival$surv^expbetas[index[i]]
   }
 
   outcomeTimes <- baselineTimes[rowSums((props>uniformSample)*1)]

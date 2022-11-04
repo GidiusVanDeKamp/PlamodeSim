@@ -1,4 +1,4 @@
-#' Breslow estimator
+#' hello
 #'
 #' @param plpData a data set like the type used with plp
 #' @param plpModel a data set like the type used with plp
@@ -8,8 +8,9 @@
 #' @export
 #'
 #' @importFrom rlang .data
-expBetaZ <- function(plpData,
-                     plpModel){
+expLp <- function(plpData,
+                  plpModel){
+
   parameters <- plpModel$model$coefficients
   indexParamNonZero <- (parameters$betas != 0)%>%
                         which()

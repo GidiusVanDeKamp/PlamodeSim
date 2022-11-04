@@ -9,7 +9,7 @@
 #' @export
 #'
 #'
-# change this fucntion so it looks more like newOutcomesSurvivalTimes.
+# change this function so it looks more like newOutcomesSurvivalTimes.
 newOutcomesCensoredSurvivalTimes <- function( plpModelCensoring, expbetasCensor, plpModel, expbetas, number){
   index <-  sample(1:length(expbetas), number, replace=T)
 
@@ -48,3 +48,4 @@ newOutcomesCensoredSurvivalTimes <- function( plpModelCensoring, expbetasCensor,
   toreturn <-data.frame(rowId = indexes, event= event, outcomes=outcomes)
   return(toreturn)
 }
+

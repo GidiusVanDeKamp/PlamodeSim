@@ -1,0 +1,115 @@
+{
+  "targetId": 4,
+  "outcomeId": 3,
+  "restrictPlpDataSettings": {
+    "studyStartDate": "",
+    "studyEndDate": "",
+    "firstExposureOnly": true,
+    "washoutPeriod": 30,
+    "sampleSize": null,
+    "attr_class": "restrictPlpDataSettings"
+  },
+  "covariateSettings": {
+    "temporal": false,
+    "temporalSequence": false,
+    "DemographicsGender": true,
+    "DemographicsAgeGroup": true,
+    "ConditionGroupEraLongTerm": true,
+    "DrugGroupEraLongTerm": true,
+    "longTermStartDays": -365,
+    "mediumTermStartDays": -180,
+    "shortTermStartDays": -30,
+    "endDays": -1,
+    "includedCovariateConceptIds": [],
+    "addDescendantsToInclude": false,
+    "excludedCovariateConceptIds": [],
+    "addDescendantsToExclude": false,
+    "includedCovariateIds": [],
+    "attr_class": "covariateSettings",
+    "attr_fun": "getDbDefaultCovariateData"
+  },
+  "populationSettings": {
+    "binary": true,
+    "includeAllOutcomes": false,
+    "firstExposureOnly": false,
+    "washoutPeriod": 180,
+    "removeSubjectsWithPriorOutcome": false,
+    "priorOutcomeLookback": 99999,
+    "requireTimeAtRisk": true,
+    "minTimeAtRisk": 1,
+    "riskWindowStart": 1,
+    "startAnchor": "cohort start",
+    "riskWindowEnd": 7300,
+    "endAnchor": "cohort start",
+    "restrictTarToCohortEnd": false,
+    "attr_class": "populationSettings"
+  },
+  "sampleSettings": [
+    {
+      "numberOutcomestoNonOutcomes": 1,
+      "sampleSeed": 1,
+      "attr_class": "sampleSettings",
+      "attr_fun": "sameData"
+    }
+  ],
+  "featureEngineeringSettings": [
+    {
+      "attr_class": "featureEngineeringSettings",
+      "attr_fun": "sameData"
+    }
+  ],
+  "preprocessSettings": {
+    "minFraction": 0,
+    "normalize": true,
+    "removeRedundancy": true,
+    "attr_class": "preprocessSettings"
+  },
+  "modelSettings": {
+    "fitFunction": "fitCyclopsModel",
+    "param": {
+      "priorParams": {
+        "priorType": "laplace",
+        "variance": 0.01,
+        "exclude": null
+      },
+      "includeCovariateIds": null,
+      "upperLimit": 20,
+      "lowerLimit": 0.01,
+      "attr_settings": {
+        "priorfunction": "Cyclops::createPrior",
+        "selectorType": "byRow",
+        "crossValidationInPrior": true,
+        "modelType": "cox",
+        "addIntercept": false,
+        "useControl": true,
+        "seed": 78675029,
+        "name": "LASSO Cox Regression",
+        "threads": -1,
+        "tolerance": 2e-07,
+        "cvRepetitions": 1,
+        "maxIterations": 3000
+      },
+      "attr_modelType": "survival",
+      "attr_saveType": "RtoJson"
+    },
+    "attr_class": "modelSettings"
+  },
+  "splitSettings": {
+    "test": 0.25,
+    "train": 0.75,
+    "seed": 123,
+    "nfold": 3,
+    "attr_class": "splitSettings",
+    "attr_fun": "randomSplitter"
+  },
+  "executeSettings": {
+    "runSplitData": true,
+    "runSampleData": false,
+    "runfeatureEngineering": false,
+    "runPreprocessData": true,
+    "runModelDevelopment": true,
+    "runCovariateSummary": true,
+    "attr_class": "executeSettings"
+  },
+  "attr_class": "modelDesign"
+}
