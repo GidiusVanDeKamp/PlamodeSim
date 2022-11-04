@@ -13,8 +13,8 @@ Welcome to the vignette about the R package PlasmodeSim. This package is still u
 
 ## installing plasmodeSim using remotes
 To install using `remotes` run:
-```{r, install, eval=F}
-install.packages("remotes")
+```{r, install}
+#install.packages("remotes")
 remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 ```
 
@@ -25,7 +25,7 @@ This documents skips some parts, we have skipped the steps to obtain the plpResu
 We begin by loading the package, together with the package `PatientLevelPrediction`, since the package `PlasmodeSim` is designed to be used with `PatientLevelPrediction`.
 ````{r, setup, message= F}
 library(dplyr) 
-library(PlasmodeSim)
+#library(PlasmodeSim)
 library(PatientLevelPrediction)
 
 modelSettings <- PatientLevelPrediction::setLassoLogisticRegression()
@@ -41,12 +41,12 @@ In this file we will show which functions are in the `PatientLevelPrediction` pa
 In this example we obtain new outcomes of a fitted logistic model.
 ````{r, ex1, message=F}
 plpModelLog <- plpResultLogistic$model
-probabilites <- newPropsParametersPlpModel(plpModelLog, plpData, plpData$cohorts)
+probabilites <- PlasmodeSim::newPropsParametersPlpModel(plpModelLog, plpData, plpData$cohorts)
 ```` 
 The function predictPlp returned this information. 
 
 ````{r}
-newOut <- newOutcomes(200, probabilites)
+newOut <- PlasmodeSim::newOutcomes(200, probabilites)
 head(newOut)
 
 ````
@@ -65,9 +65,9 @@ head(UnfittedParameters)
 For the logistic model it is necessary that the parameters are stored in a dataset with a column called `betas` and a column called `covariateIds`.  
 
 ````{r,message=F}
-plpModelunfitted <- makeLogisticModel(UnfittedParameters)
+plpModelunfitted <- PlasmodeSim::makeLogisticModel(UnfittedParameters)
 newprobs <- PatientLevelPrediction::predictPlp(plpModelunfitted, plpData,plpData$cohorts)
-newOut <- newOutcomes(200, newprobs)
+newOut <- PlasmodeSim::newOutcomes(200, newprobs)
 head(newOut)
 ````
 
@@ -77,8 +77,8 @@ head(newOut)
 The function `visualOutcome` simulated new data and then plots the frequency of the outcome.
 Right now the function `visualOutcome` only works for a logistic model. The green line in the plots is the average outcome in the original dataset. 
 ````{r, visual, message= F, out.width = "60%"}
-visualOutcome(plpData,50,200,Parameters)
-visualOutcome(plpData,50,200,UnfittedParameters)
+PlasmodeSim::visualOutcome(plpData,50,200,Parameters)
+PlasmodeSim::visualOutcome(plpData,50,200,UnfittedParameters)
 ````
 Here we have plotted 50 times the frequency of the outcome for a simulated dataset with 200 people. 
 
@@ -89,8 +89,8 @@ Here we have plotted 50 times the frequency of the outcome for a simulated datas
 covariateIdToStudy<- plpResultLogistic$covariateSummary$covariateId[3]
 UnfittedParameters[3,]
 
-visualOutcomeCovariateId(plpData, covariateIdToStudy, 20, 200, UnfittedParameters)
-visualOutcomeCovariateId2(plpData, covariateIdToStudy, 20, 200, UnfittedParameters)
+PlasmodeSim::visualOutcomeCovariateId(plpData, covariateIdToStudy, 20, 200, UnfittedParameters)
+PlasmodeSim::visualOutcomeCovariateId2(plpData, covariateIdToStudy, 20, 200, UnfittedParameters)
 
 ````
 
@@ -205,11 +205,11 @@ modelSettings <- PatientLevelPrediction::setCoxModel()
 ````
 hoi
 ````{R,message= F }
-TrainingSet <- MakeTraingSet(plpData, executeSettings, populationSettings, splitSettings, sampleSettings, preprocessSettings, featureEngineeringSettings, outcomeId=3)
+TrainingSet <- PlasmodeSim::MakeTraingSet(plpData, executeSettings, populationSettings, splitSettings, sampleSettings, preprocessSettings, featureEngineeringSettings, outcomeId=3)
 
-fitcensor<-  fitCensoring(TrainingSet$Train, modelSettings)
+fitcensor<-  PlasmodeSim::fitCensoring(TrainingSet$Train, modelSettings)
  
-NewOutcomes <- simulateWithCensoring(fitcensor, plpData, populationSettings, 20)
+NewOutcomes <- PlasmodeSim::simulateWithCensoring(fitcensor, plpData, populationSettings, 20)
 head(NewOutcomes)
 
 
