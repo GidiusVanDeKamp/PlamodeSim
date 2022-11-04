@@ -314,3 +314,129 @@
 2022-11-03 16:06:40	[Main thread]	INFO	PatientLevelPrediction	runPlp	Run finished successfully.
 2022-11-03 16:06:40	[Main thread]	INFO	PatientLevelPrediction	runPlp	Saving PlpResult
 2022-11-03 16:06:40	[Main thread]	INFO	PatientLevelPrediction	runPlp	plpResult saved to ..\results/plp_demo\plpResult
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	Patient-Level Prediction Package version 6.0.8
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	Study started at: 2022-11-04 13:29:37
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	AnalysisID:         plp_demo
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	AnalysisName:       Demonstrating the plp v5.0.0
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	TargetID:           4
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	OutcomeID:          3
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	Cohort size:        2630
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	printHeader	Covariates:         105
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction		Outcome is 0 or 1
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction	checkInputsSplit	seed: 123
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction		Creating a 25% test and 75% train (into 3 folds) random stratified split by class
+2022-11-04 13:29:37	[Main thread]	INFO	PatientLevelPrediction		Data split into 656 test cases and 1974 train cases (658, 658, 658)
+2022-11-04 13:29:38	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Train Set:
+2022-11-04 13:29:38	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Fold 1 658 patients with 120 outcomes - Fold 2 658 patients with 120 outcomes - Fold 3 658 patients with 120 outcomes
+2022-11-04 13:29:38	[Main thread]	INFO	PatientLevelPrediction	dataSummary	103 covariates in train data
+2022-11-04 13:29:38	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Test Set:
+2022-11-04 13:29:38	[Main thread]	INFO	PatientLevelPrediction	dataSummary	656 patients with 119 outcomes
+2022-11-04 13:29:38	[Main thread]	INFO	FeatureExtraction		Removing 2 redundant covariates
+2022-11-04 13:29:38	[Main thread]	INFO	FeatureExtraction		Normalizing covariates
+2022-11-04 13:29:39	[Main thread]	INFO	FeatureExtraction		Tidying covariates took 0.791 secs
+2022-11-04 13:29:39	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Train Set:
+2022-11-04 13:29:39	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Fold 1 658 patients with 120 outcomes - Fold 2 658 patients with 120 outcomes - Fold 3 658 patients with 120 outcomes
+2022-11-04 13:29:39	[Main thread]	INFO	PatientLevelPrediction	dataSummary	101 covariates in train data
+2022-11-04 13:29:39	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Test Set:
+2022-11-04 13:29:39	[Main thread]	INFO	PatientLevelPrediction	dataSummary	656 patients with 119 outcomes
+2022-11-04 13:29:39	[Main thread]	INFO	PatientLevelPrediction	runPlp	
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction		Running Cyclops
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction		Done.
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction	createCyclopsModel	GLM fit status:  OK
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction	getVariableImportance	Creating variable importance data frame
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction	predictCyclops	Prediction took 0.0762 secs
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction		Removing infrequent and redundant covariates and normalizing
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction		Prediction took 0.0836 secs
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	Evaluating survival model at time: 7300 days
+2022-11-04 13:29:40	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	C-statistic: 0.56153 (0.51-0.614)
+2022-11-04 13:29:41	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic: 0.0147746568724468
+2022-11-04 13:29:41	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic 90%: 0.0150718385882844
+2022-11-04 13:29:41	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	Evaluating survival model at time: 7300 days
+2022-11-04 13:29:41	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	C-statistic: 0.58146 (0.552-0.611)
+2022-11-04 13:29:41	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic: 0.016746487870016
+2022-11-04 13:29:41	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic 90%: 0.0187470023882286
+2022-11-04 13:29:44	[Main thread]	WARN	PatientLevelPrediction	getPredictionDistribution_survival	PredictionDistribution not available for survival models
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction		Calculating covariate summary @ 2022-11-04 13:29:44
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction		This can take a while...
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	Creating binary labels
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	Joining with strata
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 1
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 2
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 3
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 4
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TrainWithNoOutcome
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TrainWithOutcome
+2022-11-04 13:29:44	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TestWithNoOutcome
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TestWithOutcome
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction	aggregateCovariateSummaries	Aggregating with labels and strata
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction		Finished covariate summary @ 2022-11-04 13:29:45
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction	runPlp	Run finished successfully.
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction	runPlp	Saving PlpResult
+2022-11-04 13:29:45	[Main thread]	INFO	PatientLevelPrediction	runPlp	plpResult saved to ..\results/plp_demo\plpResult
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	Patient-Level Prediction Package version 6.0.8
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	Study started at: 2022-11-04 13:44:13
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	AnalysisID:         plp_demo
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	AnalysisName:       Demonstrating the plp v5.0.0
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	TargetID:           4
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	OutcomeID:          3
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	Cohort size:        2630
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	printHeader	Covariates:         105
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction		Outcome is 0 or 1
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	checkInputsSplit	seed: 123
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction		Creating a 25% test and 75% train (into 3 folds) random stratified split by class
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction		Data split into 656 test cases and 1974 train cases (658, 658, 658)
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Train Set:
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Fold 1 658 patients with 120 outcomes - Fold 2 658 patients with 120 outcomes - Fold 3 658 patients with 120 outcomes
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	dataSummary	103 covariates in train data
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Test Set:
+2022-11-04 13:44:13	[Main thread]	INFO	PatientLevelPrediction	dataSummary	656 patients with 119 outcomes
+2022-11-04 13:44:14	[Main thread]	INFO	FeatureExtraction		Removing 2 redundant covariates
+2022-11-04 13:44:14	[Main thread]	INFO	FeatureExtraction		Normalizing covariates
+2022-11-04 13:44:14	[Main thread]	INFO	FeatureExtraction		Tidying covariates took 0.854 secs
+2022-11-04 13:44:14	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Train Set:
+2022-11-04 13:44:14	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Fold 1 658 patients with 120 outcomes - Fold 2 658 patients with 120 outcomes - Fold 3 658 patients with 120 outcomes
+2022-11-04 13:44:14	[Main thread]	INFO	PatientLevelPrediction	dataSummary	101 covariates in train data
+2022-11-04 13:44:14	[Main thread]	INFO	PatientLevelPrediction	dataSummary	Test Set:
+2022-11-04 13:44:14	[Main thread]	INFO	PatientLevelPrediction	dataSummary	656 patients with 119 outcomes
+2022-11-04 13:44:14	[Main thread]	INFO	PatientLevelPrediction	runPlp	
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction		Running Cyclops
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction		Done.
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	createCyclopsModel	GLM fit status:  OK
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getVariableImportance	Creating variable importance data frame
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	predictCyclops	Prediction took 0.0829 secs
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction		Removing infrequent and redundant covariates and normalizing
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction		Prediction took 0.155 secs
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	Evaluating survival model at time: 7300 days
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	C-statistic: 0.56153 (0.51-0.614)
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic: 0.0147746568724468
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic 90%: 0.0150718385882844
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	Evaluating survival model at time: 7300 days
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	C-statistic: 0.58146 (0.552-0.611)
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic: 0.016746487870016
+2022-11-04 13:44:15	[Main thread]	INFO	PatientLevelPrediction	getEvaluationStatistics_survival	E-statistic 90%: 0.0187470023882286
+2022-11-04 13:44:18	[Main thread]	WARN	PatientLevelPrediction	getPredictionDistribution_survival	PredictionDistribution not available for survival models
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction		Calculating covariate summary @ 2022-11-04 13:44:18
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction		This can take a while...
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	Creating binary labels
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	Joining with strata
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 1
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 2
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 3
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction	createCovariateSubsets	calculating subset of strata 4
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:44:18	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TrainWithNoOutcome
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TrainWithOutcome
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TestWithNoOutcome
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction		Restricting to subgroup
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction		Calculating summary for subgroup TestWithOutcome
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction	aggregateCovariateSummaries	Aggregating with labels and strata
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction		Finished covariate summary @ 2022-11-04 13:44:19
+2022-11-04 13:44:19	[Main thread]	INFO	PatientLevelPrediction	runPlp	Run finished successfully.
+2022-11-04 13:44:20	[Main thread]	INFO	PatientLevelPrediction	runPlp	Saving PlpResult
+2022-11-04 13:44:20	[Main thread]	INFO	PatientLevelPrediction	runPlp	plpResult saved to ..\results/plp_demo\plpResult

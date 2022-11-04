@@ -82,7 +82,7 @@
         "modelType": "cox",
         "addIntercept": false,
         "useControl": true,
-        "seed": 78675029,
+        "seed": 56935126,
         "name": "LASSO Cox Regression",
         "threads": -1,
         "tolerance": 2e-07,

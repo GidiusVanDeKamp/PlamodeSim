@@ -21,7 +21,9 @@ newOutcomesSurvivalTimes2 <- function( plpModel, expbetas, number){
     props[i,]<- plpModel$model$baselineSurvival$surv^expbetas[index[i]]
   }
 
-  outcomeTimes <- baselineTimes[rowSums((props>uniformSample)*1)]
+  baselineTimes<- c(baselineTimes,Inf)
+
+  outcomeTimes <- baselineTimes[rowSums((props>uniformSample)*1)+1]
 
   data.frame(outcome = outcomeTimes, rowId = index  ) %>%  # fails when something fails before the first time in baselinehazard.
   return()

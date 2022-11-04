@@ -30,8 +30,8 @@ newOutcomesCensoredSurvivalTimes2 <- function( plpModelCensoring, expbetasCensor
     propsCensoring[i,]<- plpModelCensoring$model$baselineSurvival$surv^(expbetasCensor[index[i]])
   }
 
-  baselineTimes <-c(0,baselineTimes)
-  baselineTimesCensor <-c(0,baselineTimesCensor)
+  baselineTimes <-c(baselineTimes,Inf)
+  baselineTimesCensor <-c(baselineTimesCensor, max(baselineTimesCensor) )
 
   outcomes    <-  baselineTimes[rowSums(((props>uniformSample)*1))+1]
   censorTimes <-  baselineTimesCensor[rowSums((propsCensoring>uniformSampleCensoring)*1)+1]

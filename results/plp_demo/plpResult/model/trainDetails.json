@@ -11,12 +11,12 @@
     "attr_class": "data.frame",
     "attr_row.names": [1, 2, 3, 4]
   },
-  "trainingTime": "0.730788946151733 secs",
-  "trainingDate": "2022-11-03",
+  "trainingTime": "0.380529165267944 secs",
+  "trainingDate": "2022-11-04",
   "modelName": "cox",
   "finalModelParameters": {
-    "variance": 0.0897,
-    "log_likelihood": -2678.6271
+    "variance": 0.0918,
+    "log_likelihood": -2678.5937
   },
   "hyperParamSearch": null,
   "developmentDatabaseId": "eunomia"

@@ -101,7 +101,8 @@ modelSettings <- PatientLevelPrediction::setCoxModel()
 plpResult <- PatientLevelPrediction::loadPlpResult("~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demoCox/plpResult")
 plpModel<- plpResult$model
 
-
+newdata <- simulateSurvivaltimes(plpModel, plpData, 3, populationSettings)
+head(newdata)
 # function that simulates uncensored data,  simulateSurvivaltimes(plpModel, plpData, 20)
 ````
 
@@ -157,8 +158,9 @@ now that we have out settings. We define a training set and fit the model. The m
 ````{R,message= F }
 TrainingSet <- PlasmodeSim::MakeTraingSet(plpData, executeSettings, populationSettings, splitSettings, sampleSettings, preprocessSettings, featureEngineeringSettings, outcomeId=3)
 
-fitcensor<-  PlasmodeSim::fitCensoring(TrainingSet$Train, modelSettings)
- 
+fitcensor <- PlasmodeSim::fitCensoring(TrainingSet$Train, modelSettings)
+head(fitcensor$outcomesModel$prediction$value)
+
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(fitcensor, plpData, populationSettings, 20)
 head(NewOutcomes)
 

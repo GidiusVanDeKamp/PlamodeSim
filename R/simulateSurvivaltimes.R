@@ -25,7 +25,6 @@ simulateSurvivaltimes <- function(plpModel, plpData, number, populationSettings)
 
   baselineSurvivalOutcome <- attr(predictionOutcome, "metaData")$baselineSurvival
 
-  return(predictionOutcome)
   predictionOutcome <- predictionOutcome %>%
     dplyr::mutate(
       exp_lp = log(1 - value) / log(baselineSurvivalOutcome) #baselineSurvival or baselineHazard

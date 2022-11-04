@@ -1,10 +1,10 @@
 "covariateId","covariateName","analysisId","conceptId","covariateValue"
-4285898210,"condition_era group during day -365 through -1 days relative to index: Polyp of colon",210,4285898,0.521458262567428
-30753210,"condition_era group during day -365 through -1 days relative to index: Esophagitis",210,30753,0.327567264545807
-6003,"age group:  30 -  34",3,0,-0.0868435894788472
-8003,"age group:  40 -  44",3,0,0.0273170728640182
-1125315410,"drug_era group during day -365 through -1 days relative to index: Acetaminophen",410,1125315,-0.0235902936434897
-4283893210,"condition_era group during day -365 through -1 days relative to index: Sinusitis",210,4283893,0.000126137653547873
+4285898210,"condition_era group during day -365 through -1 days relative to index: Polyp of colon",210,4285898,0.521962239385899
+30753210,"condition_era group during day -365 through -1 days relative to index: Esophagitis",210,30753,0.328652740262655
+6003,"age group:  30 -  34",3,0,-0.0882011627643948
+8003,"age group:  40 -  44",3,0,0.0278173656590134
+1125315410,"drug_era group during day -365 through -1 days relative to index: Acetaminophen",410,1125315,-0.0258849270956988
+4283893210,"condition_era group during day -365 through -1 days relative to index: Sinusitis",210,4283893,0.00150330904596862
 372328210,"condition_era group during day -365 through -1 days relative to index: Otitis media",210,372328,0
 260139210,"condition_era group during day -365 through -1 days relative to index: Acute bronchitis",210,260139,0
 40481087210,"condition_era group during day -365 through -1 days relative to index: Viral sinusitis",210,40481087,0
