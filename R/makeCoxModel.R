@@ -19,5 +19,5 @@ makeCoxModel<- function( coefficients, baselinehazard, timesofbaselinhazard ){
   attr(Toreturn,"predictionFunction") <- "predictCyclops"
   attr(Toreturn,"modelType") <- "survival"
   attr(Toreturn,"saveType") <- "RtoJson"
-  return()
+  return(Toreturn)
 }

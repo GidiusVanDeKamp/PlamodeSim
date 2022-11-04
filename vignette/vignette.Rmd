@@ -178,9 +178,11 @@ times <- plpModel$model$baselineSurvival$time
 unfittedmodel <- PlasmodeSim::makeCoxModel(coeff, survival, times)
 
 unfittedmodel$preprocessing <- plpModel$preprocessing
+unfittedmodel$covariateImportance <- plpModel$covariateImportance
 
 
-newdata <- PlasmodeSim::simulateSurvivaltimes(plpModel , plpData, 3, populationSettings)
+
+newdata <- PlasmodeSim::simulateSurvivaltimes(unfittedmodel , plpData, 3, populationSettings)
 #head(newdata)
 
 ````
