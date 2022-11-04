@@ -16,9 +16,9 @@ newPropsParametersPlpModel <- function(plpModel,
     return( PatientLevelPrediction::predictPlp(plpModel, plpData, plpData$cohorts) # one could limit the outcomes if wanted
            )
   }
-  else if ( plpModel$model$modelType == "cox" ){
-    return( newPropsCoxversion2(plpModel,plpData))
-  }
+  # else if ( plpModel$model$modelType == "cox" ){
+  #   return( )
+  # }
   else{
     return(paste("models of the type",plpModel$model$modelType ,"are not yet implemented"))
   }

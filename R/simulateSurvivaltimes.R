@@ -36,8 +36,4 @@ simulateSurvivaltimes <- function(plpModel, plpData, number, populationSettings)
     number
   )%>%
     return()
-
-
-
-
 }

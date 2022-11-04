@@ -175,10 +175,9 @@ coeff <- plpModel$model$coefficients
 survival <- plpModel$model$baselineSurvival$surv
 times <- plpModel$model$baselineSurvival$time
 
-unfittedmodel <- makeCoxModel(coeff, survival, times)
+unfittedmodel <- PlasmodeSim::makeCoxModel(coeff, survival, times)
 
-
-newdata <- PlasmodeSim::simulateSurvivaltimes(unfittedmodel, plpData, 3, populationSettings)
-head(newdata)
+#newdata <- PlasmodeSim::simulateSurvivaltimes(unfittedmodel, plpData, 3, populationSettings)
+#head(newdata)
 
 ````

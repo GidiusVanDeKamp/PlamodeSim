@@ -11,5 +11,7 @@ makeCoxModel<- function( coefficients, baselinehazard, timesofbaselinhazard ){
   baselineSurvival <- list(time= timesofbaselinhazard, surv= baselinehazard)
   modelType <- 'cox'
   model <- list(baselineSurvival = baselineSurvival, modelType = modelType, coefficients = coefficients)
-  return(list(model=model))
+   # $preprocessing$featureEngineering : is needed
+  preprocessing <- list(featureEngineering= NULL)
+  return(list(model=model,preprocessing= preprocessing))
 }
