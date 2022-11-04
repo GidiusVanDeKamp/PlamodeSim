@@ -13,5 +13,11 @@ makeCoxModel<- function( coefficients, baselinehazard, timesofbaselinhazard ){
   model <- list(baselineSurvival = baselineSurvival, modelType = modelType, coefficients = coefficients)
    # $preprocessing$featureEngineering : is needed
   preprocessing <- list(featureEngineering= NULL)
-  return(list(model=model,preprocessing= preprocessing))
+
+  Toreturn <- list(model=model,preprocessing= preprocessing)
+  attr(Toreturn, 'class') <- 'plpModel'
+  attr(Toreturn,"predictionFunction") <- "predictCyclops"
+  attr(Toreturn,"modelType") <- "survival"
+  attr(Toreturn,"saveType") <- "RtoJson"
+  return()
 }
