@@ -7,12 +7,16 @@
 #' @return returns a dataframe with newOutcomes and subjectId
 #' @export
 #'
-makeCoxModel<- function( coefficients, baselinehazard, timesofbaselinhazard ){
+makeCoxModel<- function( coefficients,
+                         baselinehazard,
+                         timesofbaselinhazard,
+                         featureEngineering = NULL ){
+
   baselineSurvival <- list(time= timesofbaselinhazard, surv= baselinehazard)
   modelType <- 'cox'
   model <- list(baselineSurvival = baselineSurvival, modelType = modelType, coefficients = coefficients)
    # $preprocessing$featureEngineering : is needed
-  preprocessing <- list(featureEngineering= NULL)
+  preprocessing <- list(featureEngineering= featureEngineering)
 
   Toreturn <- list(model=model,preprocessing= preprocessing)
   attr(Toreturn, 'class') <- 'plpModel'

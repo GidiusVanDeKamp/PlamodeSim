@@ -1,20 +1,18 @@
 #'simulating of a survival time
 #'
 #' @param plpModel model with
-#' @param number number of people to draw.
+#' @param numberToSimulate number of people to draw.
 #' @param expbetas expbetas.
 #'
 #' @return returns a data set with new outcomes
 #' @export
 #'
 #'
-simulateSurvivaltimes <- function(plpModel, plpData, number, populationSettings){
-
-  population <- PatientLevelPrediction::createStudyPopulation(
-    plpData = plpData,
-    outcomeId = 3,
-    populationSettings = populationSettings
-  )
+simulateSurvivaltimes <- function(plpModel,
+                                  plpData,
+                                  numberToSimulate,
+                                  population,
+                                  populationSettings){ # population.
 
   predictionOutcome <- PatientLevelPrediction::predictPlp(
     plpModel   = plpModel,
@@ -33,7 +31,7 @@ simulateSurvivaltimes <- function(plpModel, plpData, number, populationSettings)
   newOutcomesSurvivalTimes2(
     plpModel,
     predictionOutcome$exp_lp,
-    number
+    numberToSimulate
   )%>%
     return()
 }

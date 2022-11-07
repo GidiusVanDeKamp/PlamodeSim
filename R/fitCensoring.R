@@ -10,7 +10,7 @@
 #'
 #'
 #
-fitCensoring<- function(Trainingset,  #do now Trainingset$Train
+fitCensoring <- function(Trainingset,  #do now Trainingset$Train
                         modelSettings){
 
   fitOutcomes <- PatientLevelPrediction::fitPlp(trainData = Trainingset,

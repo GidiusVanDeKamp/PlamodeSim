@@ -9,11 +9,14 @@
 #' @return returns a modified Baselinesurvivalfunction
 #' @export
 #'
-AdjustBaselineSurvival <- function(BaselineSurv,
+AdjustBaselineSurvival <- function(plpModel,
                                    timeTofixat,
                                    proptofixwith,
                                    expbetaz,
                                    intervalSolution= c(-100,100)){
+
+  BaselineSurv <- plpModel$model$baselineSurvival
+
   BaseLinePropAtFixedTime <- BaselineSurv$surv[which(BaselineSurv$time== timeTofixat)]
 
   funToSolve <- function(delta){
@@ -25,6 +28,6 @@ AdjustBaselineSurvival <- function(BaselineSurv,
 
   newBaselineSurv <- BaselineSurv$surv^delta
 
-  return(list(surv= newBaselineSurv, time= BaselineSurv$time))
-
+  makeCoxModel( plpModel$model$coefficients,  newBaselineSurv$surv, BaselineSurv$time )%>%
+  return()
 }

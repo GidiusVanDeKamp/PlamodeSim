@@ -92,6 +92,9 @@ PlasmodeSim::visualOutcomeCovariateId2(plpData, covariateIdToStudy, 20, 200, Unf
 As one can see `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are very similiar, they both calculate and plot the frequency for a group with a specific covariate present. The small difference is that `visualOutcomeCovariateId` filters a newly simulated dataset set to only keep the patients where the covariate is present, and `visualOutcomeCovariateId2` only simulates new outcomes for patients that have the covariate present. 
 We see they are almost the identical only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are bigger.
 
+
+
+
 ## Survival times outcomes. 
 
 For simulating new survival times we need more than one probability, we use the baselinehazard, stored in the plpModel.
@@ -116,9 +119,21 @@ populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   endAnchor = 'cohort start'
 )
 
-newdata <- PlasmodeSim::simulateSurvivaltimes(plpModel, plpData, 3, populationSettings)
+
+population <- PatientLevelPrediction::createStudyPopulation(
+  plpData = plpData,
+  outcomeId = 3,
+  populationSettings = populationSettings
+)
+
+newdata <- PlasmodeSim::simulateSurvivaltimes( #(plpModel, plpData, number, population, populationSettings)
+  plpModel = plpModel,
+  plpData = plpData ,
+  number = 10,
+  population = population,
+  populationSettings = populationSettings
+)
 head(newdata)
-# function that simulates uncensored data,  simulateSurvivaltimes(plpModel, plpData, 20)
 ````
 
 ## Simulation censored survival data
@@ -158,31 +173,83 @@ modelSettings <- PatientLevelPrediction::setCoxModel()
 now that we have out settings. We define a training set and fit the model. The model acctually consist of two plpModels stored in a list. 
 
 ````{R,message= F }
-TrainingSet <- PlasmodeSim::MakeTraingSet(plpData, executeSettings, populationSettings, splitSettings, sampleSettings, preprocessSettings, featureEngineeringSettings, outcomeId=3)
 
-fitcensor <- PlasmodeSim::fitCensoring(TrainingSet$Train, modelSettings)
+TrainingSet <- PlasmodeSim::MakeTraingSet(
+  plpData = plpData,
+  executeSettings = executeSettings,
+  populationSettings = populationSettings,
+  splitSettings = splitSettings,
+  sampleSettings = sampleSettings,
+  preprocessSettings = preprocessSettings,
+  featureEngineeringSettings= featureEngineeringSettings,
+  outcomeId=3
+)          # this sometimes fials then i run again and it works fine?
 
-NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(fitcensor, plpData, populationSettings, 20)
+fitcensor <- PlasmodeSim::fitCensoring(
+  Trainingset = TrainingSet$Train,
+  modelSettings = modelSettings
+)
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  fitcensor,
+  plpData,
+  populationSettings,
+  20
+)
 head(NewOutcomes)
 
 ````
 
 # Make an unfitted model
 
-````{R, }
+````{R,message= F  }
 # makeCoxModel. 
 coeff <- plpModel$model$coefficients
 survival <- plpModel$model$baselineSurvival$surv
 times <- plpModel$model$baselineSurvival$time
 
-unfittedmodel <- PlasmodeSim::makeCoxModel(coeff, survival, times)
+unfittedmodel <- PlasmodeSim::makeCoxModel(
+  coefficients = coeff,
+  baselinehazard = survival,
+  timesofbaselinhazard = times,
+  featureEngineering = NULL
+)
 
-unfittedmodel$preprocessing <- plpModel$preprocessing
-unfittedmodel$covariateImportance <- plpModel$covariateImportance
+
+newdata <- PlasmodeSim::simulateSurvivaltimes(
+  plpModel = unfittedmodel,
+  plpData = plpData,
+  numberToSimulate = 10,
+  population = population, 
+  populationSettings = populationSettings
+)
 
 
 
-newdata <- PlasmodeSim::simulateSurvivaltimes(unfittedmodel , plpData, 3, populationSettings)
-#head(newdata)
+head(newdata)
+````
+
+# Make an unfitted model with censoring 
+
+````{R,message= F  }
+
+unfittedcensor<- list(censorModel =  fitcensor$censorModel,
+                      outcomesModel = unfittedmodel) #is this okey or should we have a functin that does this. 
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  fitCensor = unfittedcensor,
+  plpData = plpData,
+  populationSettings = populationSettings,
+  numberToSimulate = 20
+)
+
+head(NewOutcomes)
+
+````
+
+# Adjust the BaselineSurvival 
+
+````{R,message= F  }
+#AdjustBaselineSurvival(plpModel,3592 ,0.87, expLp(plpData,plpModel), intervalSolution= c(-100,100))
 
 ````

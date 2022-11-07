@@ -2,7 +2,7 @@
 #'
 #' @param propMatrix matrix with the probabailies for outcomes
 #' @param propMatrixCensoring matrix with the probabailies for censoring
-#' @param number number of people to w.
+#' @param numberToSimulate number of people to w.
 #' @param uniqueTimes vector with the possible outcome times.
 #'
 #' @return returns a data set with new outcomes
@@ -10,7 +10,10 @@
 #' @export
 #'
 #'
-simulateSurvivaltimesWithCensoring <- function(fitCensor, plpData, populationSettings,number){
+simulateSurvivaltimesWithCensoring <- function(fitCensor,
+                                               plpData,
+                                               populationSettings,
+                                               numberToSimulate){ #change settings to population
   modelCensor <- fitCensor$censorModel
   modelOutcomes <- fitCensor$outcomesModel
 
@@ -52,7 +55,7 @@ simulateSurvivaltimesWithCensoring <- function(fitCensor, plpData, populationSet
     expbetasCensor = predictionCensor$exp_lp ,
     plpModel = modelOutcomes,
     expbetas = predictionOutcome$exp_lp,
-    number
+    numberToSimulate
   )%>%
   return()
 
