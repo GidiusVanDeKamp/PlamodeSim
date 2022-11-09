@@ -16,9 +16,21 @@ MakeTraingSet(
 )
 }
 \arguments{
-\item{prediction}{form a predictPlp}
+\item{plpData}{the plpData}
 
-\item{baselineSurvival}{}
+\item{executeSettings}{the executeSettings}
+
+\item{populationSettings}{the populationSettings}
+
+\item{splitSettings}{the splitSettings}
+
+\item{sampleSettings, }{the sample Settings}
+
+\item{preprocessSettings, }{the preprocessSettings}
+
+\item{featureEngineeringSettings}{the featureEngineeringSettings.}
+
+\item{outcomeId}{the outcomeID}
 }
 \value{
 returns the prediction with an extra column

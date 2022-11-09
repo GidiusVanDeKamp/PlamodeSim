@@ -5,10 +5,11 @@
 #' @param noSimulations number of simulations
 #' @param noPersons number of persons in each simulation
 #' @param parameters a data set with parameters like the type used for plp
-#' @param modelName a string with the type of model.
 #'
 #' @return returns a histogram for the frequencies of the outcome the frequency is calculated with only the patients that have the given covariate Id present.
 #' @export
+#'
+#' @importFrom rlang .data
 #'
 visualOutcomeCovariateId <- function(
                      plpData,
@@ -34,7 +35,7 @@ visualOutcomeCovariateId <- function(
 
   #indexstudycov<- which(studyCovariateId==plpResult$covariateSummary$covariateId )
 
-  ggplot2::ggplot(obsfreq, ggplot2::aes(freq))+
+  ggplot2::ggplot(obsfreq, ggplot2::aes(.data$freq))+
   ggplot2::geom_histogram(binwidth=0.05)+
   ggplot2::geom_vline(xintercept =plotGreenLine, col='green')+
   ggplot2::coord_cartesian(xlim=c(-0.1,1.1))+
@@ -47,29 +48,4 @@ visualOutcomeCovariateId <- function(
     noPersons,
     "persons."))
 
-  }
-greenLine <- function(plpData,
-                      studyCovariateId,
-                      youroutcomeId){
-
-  indexOutcome <- (plpData$outcomes %>%
-                     dplyr::filter( outcomeId == youroutcomeId) %>% #change 3 to new variable called outcomeid
-                     dplyr::select(rowId) )[[1]]
-
-  indexesCovariate <- (plpData$covariateData$covariates %>%
-                         dplyr::filter( covariateId == studyCovariateId) %>%
-                         dplyr::select(rowId) %>%
-                         dplyr::count()%>%
-                         dplyr::collect( )%>%
-                         as.numeric())[[1]]
-
-  indexesCovariateAndOutcome <- (plpData$covariateData$covariates %>%
-                                   dplyr::filter( covariateId == studyCovariateId & rowId %in% indexOutcome) %>%
-                                   dplyr::select(rowId) %>%
-                                   dplyr::count()%>%
-                                   dplyr::collect( )%>%
-                                   as.numeric())
-
-  return(indexesCovariateAndOutcome/indexesCovariate)
 }
-

@@ -9,7 +9,7 @@ addExpLp(prediction, baselineSurvival)
 \arguments{
 \item{prediction}{form a predictPlp}
 
-\item{baselineSurvival}{}
+\item{baselineSurvival}{the baselinesurvival}
 }
 \value{
 returns the prediction with an extra column

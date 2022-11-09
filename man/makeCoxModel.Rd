@@ -4,12 +4,21 @@
 \alias{makeCoxModel}
 \title{makes an not fitted model}
 \usage{
-makeCoxModel(coefficients, baselinehazard, timesofbaselinhazard)
+makeCoxModel(
+  coefficients,
+  baselinehazard,
+  timesofbaselinhazard,
+  featureEngineering = NULL
+)
 }
 \arguments{
-\item{parameters}{data set with parameters with rows called betas and covariateIds}
+\item{coefficients}{data set with parameters with rows called betas and covariateIds}
 
-\item{modelname}{number of persons in the returned data set}
+\item{baselinehazard}{number of persons in the returned data set}
+
+\item{timesofbaselinhazard}{data set with parameters with rows called betas and covariateIds}
+
+\item{featureEngineering}{the featureEngineering}
 }
 \value{
 returns a dataframe with newOutcomes and subjectId

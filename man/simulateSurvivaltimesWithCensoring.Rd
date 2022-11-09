@@ -5,20 +5,23 @@
 \title{predict censoring times}
 \usage{
 simulateSurvivaltimesWithCensoring(
-  fitCensor,
+  censorModel,
   plpData,
+  population,
   populationSettings,
-  number
+  numberToSimulate
 )
 }
 \arguments{
-\item{number}{number of people to w.}
+\item{censorModel}{a Model as made by fitModelWithCensoring a list with twomodels named censorModel and outcomesModel}
 
-\item{propMatrix}{matrix with the probabailies for outcomes}
+\item{plpData}{the plpData}
 
-\item{propMatrixCensoring}{matrix with the probabailies for censoring}
+\item{population}{the population to drawfrom}
 
-\item{uniqueTimes}{vector with the possible outcome times.}
+\item{populationSettings}{the populationSettings}
+
+\item{numberToSimulate}{number of people to simulate new outcomes for.}
 }
 \value{
 returns a data set with new outcomes

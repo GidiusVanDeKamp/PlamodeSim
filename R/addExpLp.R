@@ -1,7 +1,7 @@
 #' adds the expLp to a prediction
 #'
 #' @param prediction form a predictPlp
-#' @param baselineSurvival
+#' @param baselineSurvival the baselinesurvival
 #'
 #'
 #' @return returns the prediction with an extra column
@@ -11,7 +11,7 @@
 addExpLp <- function(prediction,baselineSurvival){
   prediction %>%
     dplyr::mutate(
-      exp_lp = log(1 - value) / log(baselineSurvival)
+      exp_lp = log(1 - .data$value) / log(baselineSurvival)
     )%>%
   return()
 }

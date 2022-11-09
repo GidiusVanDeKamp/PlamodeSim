@@ -1,8 +1,10 @@
 #' makes an not fitted model
 #'
 #'
-#' @param parameters data set with parameters with rows called betas and covariateIds
-#' @param modelname number of persons in the returned data set
+#' @param coefficients data set with parameters with rows called betas and covariateIds
+#' @param baselinehazard number of persons in the returned data set
+#' @param timesofbaselinhazard data set with parameters with rows called betas and covariateIds
+#' @param featureEngineering the featureEngineering
 #'
 #' @return returns a dataframe with newOutcomes and subjectId
 #' @export

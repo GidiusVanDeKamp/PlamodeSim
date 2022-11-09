@@ -13,13 +13,15 @@ newOutcomesCensoredSurvivalTimes2(
 )
 }
 \arguments{
+\item{plpModelCensoring}{a plpModel for the censoringtimes}
+
+\item{expbetasCensor}{a vector with the expbeta for the censoring model}
+
+\item{plpModel}{a plpModel for the outcomes}
+
+\item{expbetas}{the expbetas for the outcomemodel}
+
 \item{number}{number of people to draw.}
-
-\item{propMatrix}{matrix with the probabailies for outcomes}
-
-\item{propMatrixCensoring}{matrix with the probabailies for censoring}
-
-\item{uniqueTimes}{vector with the possible outcome times.}
 }
 \value{
 returns a data set with new outcomes

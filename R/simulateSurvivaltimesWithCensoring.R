@@ -1,27 +1,25 @@
 #' predict censoring times
 #'
-#' @param propMatrix matrix with the probabailies for outcomes
-#' @param propMatrixCensoring matrix with the probabailies for censoring
-#' @param numberToSimulate number of people to w.
-#' @param uniqueTimes vector with the possible outcome times.
+#' @param censorModel a Model as made by fitModelWithCensoring a list with twomodels named censorModel and outcomesModel
+#' @param plpData the plpData
+#' @param population the population to drawfrom
+#' @param populationSettings the populationSettings
+#' @param numberToSimulate number of people to simulate new outcomes for.
 #'
 #' @return returns a data set with new outcomes
 #'
 #' @export
 #'
 #'
-simulateSurvivaltimesWithCensoring <- function(fitCensor,
-                                               plpData,
-                                               populationSettings,
-                                               numberToSimulate){ #change settings to population
-  modelCensor <- fitCensor$censorModel
-  modelOutcomes <- fitCensor$outcomesModel
+#' @importFrom rlang .data
 
-  population <- PatientLevelPrediction::createStudyPopulation(
-    plpData = plpData,
-    outcomeId = 3,
-    populationSettings = populationSettings
-  )
+simulateSurvivaltimesWithCensoring <- function(censorModel,
+                                               plpData,
+                                               population,
+                                               populationSettings,
+                                               numberToSimulate){
+  modelCensor <- censorModel$censorModel
+  modelOutcomes <- censorModel$outcomesModel
 
   predictionOutcome <- PatientLevelPrediction::predictPlp(
     plpModel   = modelOutcomes,
@@ -37,28 +35,69 @@ simulateSurvivaltimesWithCensoring <- function(fitCensor,
     timepoint  = populationSettings$riskWindowEnd
   )
 
-  baselineSurvivalOutcome <- attr(predictionOutcome, "metaData")$baselineSurvival
-  baselineSurvivalCensor <- attr(predictionCensor, "metaData")$baselineSurvival
+  baselineSurvivalOutcome <-attr(predictionOutcome, "metaData")$baselineSurvival
+  baselineSurvivalCensor <-attr(predictionCensor, "metaData")$baselineSurvival
 
   predictionOutcome <- predictionOutcome %>%
     dplyr::mutate(
-      exp_lp = log(1 - value) / log(baselineSurvivalOutcome) #baselineSurvival or baselineHazard
+      exp_lp = log(1 - .data$value) / log(baselineSurvivalOutcome)
     )
 
   predictionCensor <- predictionCensor %>%
     dplyr::mutate(
-      exp_lp = log(1 - value) / log(baselineSurvivalCensor)
+      exp_lp = log(1 - .data$value) / log(baselineSurvivalCensor)
     )
 
-  newOutcomesCensoredSurvivalTimes2(
-    plpModelCensoring = modelCensor,
-    expbetasCensor = predictionCensor$exp_lp ,
-    plpModel = modelOutcomes,
-    expbetas = predictionOutcome$exp_lp,
-    numberToSimulate
-  )%>%
-  return()
+  # newOutcomesCensoredSurvivalTimes2(  # i think i should remake this function better.
+  #   plpModelCensoring = modelCensor,
+  #   expbetasCensor = predictionCensor$exp_lp ,
+  #   plpModel = modelOutcomes,
+  #   expbetas = predictionOutcome$exp_lp,
+  #   numberToSimulate
+  # )%>%
 
+
+  baselineSurvOutcome <- modelOutcomes$model$baselineSurvival$surv
+  baselineTimesOutcome <- modelOutcomes$model$baselineSurvival$time
+
+  baselineSurvCensor <- modelCensor$model$baselineSurvival$surv
+  baselineTimesCensor <- modelCensor$model$baselineSurvival$time
+
+  index <- sample(predictionOutcome$rowId, numberToSimulate, replace=T)
+  uniformSampleOutcome <- stats::runif(numberToSimulate)
+  uniformSampleCensor <- stats::runif(numberToSimulate)
+
+  toreturn<- data.frame(rowId= index)
+
+  baselineTimesOutcome<- c(0,baselineTimesOutcome)
+  baselineTimesCensor<- c(0,baselineTimesCensor)
+
+  # i think the inf should be skipped/it is unnecessary
+
+  for( i in 1:numberToSimulate){
+    id <- index[i]
+    expbetalpOutcome <-  (predictionOutcome %>%
+                            dplyr::filter(rowId == id) %>%
+                            dplyr::select( exp_lp))$exp_lp
+    expbetalpCensor <-  (predictionCensor %>%
+                           dplyr::filter(rowId == id) %>%
+                           dplyr::select( exp_lp))$exp_lp
+
+    propsOutcome <- baselineSurvOutcome^expbetalpOutcome
+    propsCensor  <- baselineSurvCensor^expbetalpCensor
+
+    toreturn$outcomeTime[i] <- baselineTimesOutcome[sum((propsOutcome>uniformSampleOutcome[i])*1)+1]
+    toreturn$censorTime[i] <- baselineTimesCensor[sum((propsCensor>uniformSampleCensor[i])*1)+1]
+  }
+
+  toreturn%>%
+    dplyr::mutate(Time = pmin(
+      outcomeTime,censorTime),
+      outcomecount = ((Time==outcomeTime)*1)*
+        ((Time < censorTime )*1)
+    )%>%
+    dplyr::select(rowId, Time, outcomecount)%>%
+    return()
 }
 
 

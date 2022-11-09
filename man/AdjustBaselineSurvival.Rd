@@ -5,23 +5,29 @@
 \title{adjust an Baseline Survival function such that the overal event rate is fixed}
 \usage{
 AdjustBaselineSurvival(
-  BaselineSurv,
+  plpModel,
+  TrainingSet,
+  plpData,
+  populationSettings,
   timeTofixat,
   proptofixwith,
-  expbetaz,
   intervalSolution = c(-100, 100)
 )
 }
 \arguments{
-\item{BaselineSurv}{a data frame with the the colums called surv and time.}
+\item{plpModel}{a plpModel u want to adjust}
+
+\item{TrainingSet}{the training used for fitting the model, is used for adjusting the model}
+
+\item{plpData}{the plpData}
+
+\item{populationSettings}{the populationsettings.}
 
 \item{timeTofixat}{a time in days to fix the eventrate at. has to be in the times of the baseline survival}
 
-\item{proptofixwith}{probabilitie of the event something somethign}
+\item{proptofixwith}{probabilities to fix}
 
-\item{expbetaz}{the vector with expbetasz made with function expBetaZ()}
-
-\item{intervalSolution}{the inteval used for finding the solution.}
+\item{intervalSolution}{as this function solves an equation is needs an inteval for finding the solution.}
 }
 \value{
 returns a modified Baselinesurvivalfunction

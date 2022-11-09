@@ -22,8 +22,6 @@ visualOutcomeCovariateId2(
 \item{noPersons}{number of persons in each simulation}
 
 \item{parameters}{a data set with parameters like the type used for plp}
-
-\item{modelName}{a string with the type of model.}
 }
 \value{
 returns a histogram for the frequencies of the outcome there is only simulated from patients that have the given covariate Id.

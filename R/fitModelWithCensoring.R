@@ -1,17 +1,15 @@
 #' predict censoring times
 #'
-#' @param propMatrix matrix with the probabailies for outcomes
-#' @param propMatrixCensoring matrix with the probabailies for censoring
-#' @param number number of people to draw.
-#' @param uniqueTimes vector with the possible outcome times.
+#' @param Trainingset the dataset used for traing the model.
+#' @param modelSettings the modelSettings
 #'
 #' @return returns a data set with new outcomes
 #' @export
 #'
-#'
-#
-fitCensoring <- function(Trainingset,  #do now Trainingset$Train
-                        modelSettings){
+#' @importFrom rlang .data
+
+fitModelWithCensoring <- function(Trainingset,  #do now Trainingset$Train
+                                  modelSettings){
 
   fitOutcomes <- PatientLevelPrediction::fitPlp(trainData = Trainingset,
                                                 modelSettings = modelSettings,
@@ -20,7 +18,7 @@ fitCensoring <- function(Trainingset,  #do now Trainingset$Train
   censoringPop <- Trainingset
   censoringPop$labels <- censoringPop$labels %>%
     dplyr::mutate(
-      outcomeCount = as.numeric(!(as.logical(outcomeCount)))
+      outcomeCount = as.numeric(!(as.logical(.data$outcomeCount)))
     )
 
   fitCensoring <- PatientLevelPrediction::fitPlp(trainData = censoringPop,

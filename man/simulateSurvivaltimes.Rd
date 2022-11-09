@@ -4,14 +4,24 @@
 \alias{simulateSurvivaltimes}
 \title{simulating of a survival time}
 \usage{
-simulateSurvivaltimes(plpModel, plpData, number, populationSettings)
+simulateSurvivaltimes(
+  plpModel,
+  plpData,
+  numberToSimulate,
+  population,
+  populationSettings
+)
 }
 \arguments{
-\item{plpModel}{model with}
+\item{plpModel}{a plpModel}
 
-\item{number}{number of people to draw.}
+\item{plpData}{a plpdata}
 
-\item{expbetas}{expbetas.}
+\item{numberToSimulate}{number of people to draw and simulate new outcomes for.}
+
+\item{population}{the population to draw from}
+
+\item{populationSettings}{the populationSettings}
 }
 \value{
 returns a data set with new outcomes

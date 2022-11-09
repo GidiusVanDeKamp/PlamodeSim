@@ -9,6 +9,7 @@
 #' @return returns a histogram for the frequencies of the outcome
 #' @export
 #'
+#' @importFrom rlang .data
 visualOutcome <- function( plpData,
                            noSimulations,
                            noPersons,
@@ -26,7 +27,7 @@ visualOutcome <- function( plpData,
   obsfreq= data.frame('obsfreq'= obsfreq)
 
   part <- plpData$outcomes %>%
-          dplyr::filter( outcomeId== 3) %>%
+          dplyr::filter(.data$outcomeId== 3) %>%
           dplyr::count() %>%
           as.integer()
 

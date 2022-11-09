@@ -1,7 +1,13 @@
 #'hello
 #'
-#' @param prediction form a predictPlp
-#' @param baselineSurvival
+#' @param plpData the plpData
+#' @param executeSettings the executeSettings
+#' @param populationSettings the populationSettings
+#' @param splitSettings the splitSettings
+#' @param sampleSettings, the sample Settings
+#' @param preprocessSettings, the preprocessSettings
+#' @param featureEngineeringSettings the featureEngineeringSettings.
+#' @param outcomeId the outcomeID
 #'
 #' @return returns the prediction with an extra column
 #' @export
@@ -15,20 +21,32 @@ MakeTraingSet <- function(plpData,
                           featureEngineeringSettings,
                           outcomeId){
 
-  population <- PatientLevelPrediction::createStudyPopulation(plpData = plpData,
-                                      outcomeId = outcomeId,
-                                      populationSettings = populationSettings)
 
-  #### if executeSettings ####
+  population <- tryCatch({
+    do.call(PatientLevelPrediction::createStudyPopulation, list(plpData = plpData,
+                                        outcomeId = outcomeId, populationSettings = populationSettings,
+                                        population = plpData$population))
+  }, error = function(e) {
+    ParallelLogger::logError(e)
+    return(NULL)
+  })
+  # #addsome sort of trycatch?
+  # population <- PatientLevelPrediction::createStudyPopulation(
+  #   plpData = plpData,
+  #   outcomeId = outcomeId,
+  #   populationSettings = populationSettings
+  # )
+
+  data<- plpData
+  # i am not sure what should happen when executesettings$runsplitdata = False
+#
   if(executeSettings$runSplitData){
     # split the data (test/train/cv) + summarise at the end
     data <- tryCatch(
       {
-        PatientLevelPrediction::splitData(
-          plpData = plpData,
-          population = population,
-          splitSettings = splitSettings
-        )
+        do.call(PatientLevelPrediction::splitData,list(plpData = data,
+                                                       population = population,
+                                                       splitSettings = splitSettings))
       },
       error = function(e){ParallelLogger::logError(e); return(NULL)}
     )
@@ -37,7 +55,7 @@ MakeTraingSet <- function(plpData,
     }
 
     PatientLevelPrediction:::dataSummary(data)
-  }
+    }
 
   if(executeSettings$runSampleData){
     # sampling
@@ -88,7 +106,7 @@ MakeTraingSet <- function(plpData,
     }
     PatientLevelPrediction:::dataSummary(data)
   }
-  #### ####
+
 
   return(data)
 }
