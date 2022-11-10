@@ -111,13 +111,76 @@ As one can see `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are ve
 We see they are almost the identical only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are bigger.
 
 # Survival times outcomes. 
-## first we make a training set. 
+## first we make a training set.
+````{r, load the data set,message= F }
+connectionDetails <- Eunomia::getEunomiaConnectionDetails()
+
+# create the database
+Eunomia::createCohorts(
+  connectionDetails = connectionDetails,
+  cdmDatabaseSchema = 'main',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort'
+)
+
+# ------------------------------------------------------------------------------
+# Points PatientLevelPredictionPackage to the Eunomia database
+# Tells Eunomia to extract the cohort stored with id = 4 as the target cohort
+# and cohort with id = 3 as the outcome cohort. The other settings (...Schema)
+# tell the database where to look for the target and the outcome cohorts
+# ------------------------------------------------------------------------------
+databaseDetails <- PatientLevelPrediction::createDatabaseDetails(
+  connectionDetails = connectionDetails,
+  cdmDatabaseId = "eunomia",
+  cdmDatabaseSchema = 'main',
+  cdmDatabaseName = 'Eunomia',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort',
+  target = 4,
+  outcomeDatabaseSchema = 'main',
+  outcomeTable = 'cohort',
+  outcomeId = 3,
+  cdmVersion = 5
+)
+
+# Use ?FeatureExtraction::createCovariateSettings to see what the options are
+# There are a lot...
+covariateSettings <- FeatureExtraction::createCovariateSettings(
+  useDemographicsGender = TRUE,
+  useDemographicsAgeGroup = TRUE,
+  useConditionGroupEraLongTerm = TRUE,
+  useDrugGroupEraLongTerm = TRUE,
+  endDays = -1,
+  longTermStartDays = -365
+)
+
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  studyStartDate = '20000101',
+  studyEndDate = '20200101',
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+# issue with studyStartDate/studyEndDate
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+plpData <- PatientLevelPrediction::getPlpData(
+  databaseDetails = databaseDetails,
+  covariateSettings = covariateSettings,
+  restrictPlpDataSettings = restrictPlpDataSettings
+)
+````
 
 For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the plpModel, we also need a model for the censoring.
 First we make the traing set.
 ````{R, message= F}
-plpData <- PatientLevelPrediction::loadPlpData(
-  "~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_democox/Data" )
+# plpData <- PatientLevelPrediction::loadPlpData(
+#   "~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_democox/Data" )
+# 
+
 
 populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   binary = TRUE,
@@ -188,7 +251,7 @@ fitCensor <- PlasmodeSim::fitModelWithCensoring(
 ````
 
 ## Generate new outcomes from a population. 
-````{R,message= F }
+````{R, create newout ,message= F}
 population <- PatientLevelPrediction::createStudyPopulation(
   plpData = plpData,
   outcomeId = 3,
@@ -200,7 +263,7 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   plpData = plpData,
   population = population,
   populationSettings = populationSettings,
-  numberToSimulate = 20
+  numberToSimulate = 10
 )
 head(NewOutcomes)
 
@@ -209,7 +272,7 @@ head(NewOutcomes)
 newdata <- PlasmodeSim::simulateSurvivaltimes(
   plpModel = fitCensor$outcomesModel,
   plpData = plpData,
-  numberToSimulate = 100,
+  numberToSimulate = 10,
   population = population,
   populationSettings = populationSettings
 )
@@ -218,7 +281,7 @@ head(newdata)
 
 ## Make an unfitted model
 
-````{R,message= F  }
+````{R,make unfittedmodel, message= F  }
 # makeCoxModel. 
 
 plpModel <- fitCensor$outcomesModel
@@ -246,7 +309,7 @@ head(newdata)
 
 ## Make an unfitted model with censoring 
 
-````{R,message= F }
+````{R,unfittedmodel with censoring ,message= F }
 #we can swap outcomes with censoring. 
 unfittedcensor<- list(censorModel = unfittedmodel,
                       outcomesModel = fitCensor$outcomesModel) 
@@ -256,7 +319,7 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   plpData = plpData,
   population =  population,
   populationSettings = populationSettings,
-  numberToSimulate = 20
+  numberToSimulate = 200
 )
 
 head(NewOutcomes)
@@ -264,7 +327,7 @@ head(NewOutcomes)
 
 # Adjust the BaselineSurvival 
 
-````{R,message= F  }
+````{R, adjust baseline surv,message= F  }
 adjustedModel <- PlasmodeSim::AdjustBaselineSurvival(
   plpModel = plpModel,
   TrainingSet = TrainingSet$Train,
@@ -281,7 +344,37 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   plpData = plpData,
   population =  population,
   populationSettings = populationSettings,
-  numberToSimulate = 20
+  numberToSimulate = 2000
 )
 head(NewOutcomes)
+
+
 ````
+# plotting the survival 
+the function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. we can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
+````{R, plottingsurvival,message= F}
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = population,
+  populationSettings = populationSettings,
+  numberToSimulate = 2000
+)
+
+NewOutcomes2 <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = population,
+  populationSettings = populationSettings,
+  numberToSimulate = 2000
+)
+
+ggplot2::ggplot()+
+  PlasmodeSim::KaplanMeierPlot( NewOutcomes )+
+  PlasmodeSim::KaplanMeierPlot( NewOutcomes2 )+
+  PlasmodeSim::KaplanMeierPlot( population, colour = 'red' )+
+  ggplot2::xlim(c(0,100))
+
+````
+

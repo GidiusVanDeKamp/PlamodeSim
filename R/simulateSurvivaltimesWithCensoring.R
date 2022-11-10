@@ -91,12 +91,12 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
   }
 
   toreturn%>%
-    dplyr::mutate(Time = pmin(
+    dplyr::mutate(survivalTime = pmin(
       outcomeTime,censorTime),
-      outcomecount = ((Time==outcomeTime)*1)*
-        ((Time < censorTime )*1)
+      outcomeCount = ((survivalTime==outcomeTime)*1)*
+        ((survivalTime < censorTime )*1)
     )%>%
-    dplyr::select(rowId, Time, outcomecount)%>%
+    dplyr::select(rowId, survivalTime, outcomeCount)%>%
     return()
 }
 

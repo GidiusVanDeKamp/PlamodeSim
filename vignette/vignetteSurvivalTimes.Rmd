@@ -1,0 +1,215 @@
+---
+title: "vignetteSurvivalTimes"
+output:
+  pdf_document: default
+  html_document: default
+date: "2022-11-10"
+---
+
+# Survival times outcomes. 
+## first we make a training set.
+
+For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the plpModel, we also need a model for the censoring.
+First we make the traing set.
+````{R, message= F}
+plpData <- PatientLevelPrediction::loadPlpData(
+  "~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_democox/Data" )
+
+
+
+populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
+  binary = TRUE,
+  includeAllOutcomes = FALSE,
+  firstExposureOnly = FALSE,
+  washoutPeriod = 180,
+  removeSubjectsWithPriorOutcome = FALSE,
+  priorOutcomeLookback = 99999,
+  requireTimeAtRisk = TRUE,
+  minTimeAtRisk = 1,
+  riskWindowStart = 1,
+  startAnchor = 'cohort start',
+  riskWindowEnd = 7300,
+  endAnchor = 'cohort start'
+)
+executeSettings <- PatientLevelPrediction::createExecuteSettings(
+  runSplitData = TRUE,
+  runSampleData = FALSE,
+  runfeatureEngineering = FALSE,
+  runPreprocessData = TRUE,
+  runModelDevelopment = TRUE,
+  runCovariateSummary = TRUE
+)
+splitSettings <- PatientLevelPrediction::createDefaultSplitSetting(
+  testFraction = 0.25,
+  trainFraction = 0.75,
+  splitSeed = 123,
+  nfold = 3,
+  type = 'stratified'
+)
+sampleSettings <- PatientLevelPrediction::createSampleSettings(
+  type = 'none'
+)
+featureEngineeringSettings <- 
+  PatientLevelPrediction::createFeatureEngineeringSettings(
+  type = 'none'
+)
+preprocessSettings <- PatientLevelPrediction::createPreprocessSettings(
+  minFraction = 0,
+  normalize = TRUE,
+  removeRedundancy = TRUE
+)
+TrainingSet <- PlasmodeSim::MakeTraingSet(
+  plpData = plpData,
+  executeSettings = executeSettings,
+  populationSettings = populationSettings,
+  splitSettings = splitSettings,
+  sampleSettings = sampleSettings,
+  preprocessSettings = preprocessSettings,
+  featureEngineeringSettings = featureEngineeringSettings,
+  outcomeId = 3
+)
+
+````
+## Fit the model 
+To fit the model we make the modelsettings and we run the function `fitModelWithCensoring`.
+````{R, message= F}
+
+modelSettings <- PatientLevelPrediction::setCoxModel()
+
+fitCensor <- PlasmodeSim::fitModelWithCensoring( 
+  Trainingset = TrainingSet$Train,
+  modelSettings = modelSettings 
+  # now i have only one model setting
+  # should i change this to two seperate settings
+)
+
+````
+
+## Generate new outcomes from a population. 
+````{R, create newout ,message= F}
+population <- PatientLevelPrediction::createStudyPopulation(
+  plpData = plpData,
+  outcomeId = 3,
+  populationSettings = populationSettings
+)
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = population,
+  populationSettings = populationSettings,
+  numberToSimulate = 10
+)
+head(NewOutcomes)
+
+#for simulation the uncensored data
+
+newdata <- PlasmodeSim::simulateSurvivaltimes(
+  plpModel = fitCensor$outcomesModel,
+  plpData = plpData,
+  numberToSimulate = 10,
+  population = population,
+  populationSettings = populationSettings
+)
+head(newdata)
+````
+
+## Make an unfitted model
+
+````{R,make unfittedmodel, message= F  }
+# makeCoxModel. 
+
+plpModel <- fitCensor$outcomesModel
+coeff <- plpModel$model$coefficients
+survival <- plpModel$model$baselineSurvival$surv
+times <- plpModel$model$baselineSurvival$time
+
+unfittedmodel <- PlasmodeSim::makeCoxModel(
+  coefficients = coeff,
+  baselinehazard = survival,
+  timesofbaselinhazard = times,
+  featureEngineering = NULL #  = NULL is the standart setting. 
+)
+
+newdata <- PlasmodeSim::simulateSurvivaltimes(
+  plpModel = unfittedmodel,
+  plpData = plpData,
+  numberToSimulate = 10,
+  population = population,
+  populationSettings = populationSettings
+)
+
+head(newdata)
+````
+
+## Make an unfitted model with censoring 
+
+````{R,unfittedmodel with censoring ,message= F }
+#we can swap outcomes with censoring. 
+unfittedcensor<- list(censorModel = unfittedmodel,
+                      outcomesModel = fitCensor$outcomesModel) 
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = unfittedcensor,
+  plpData = plpData,
+  population =  population,
+  populationSettings = populationSettings,
+  numberToSimulate = 200
+)
+
+head(NewOutcomes)
+````
+
+# Adjust the BaselineSurvival 
+
+````{R, adjust baseline surv,message= F  }
+adjustedModel <- PlasmodeSim::AdjustBaselineSurvival(
+  plpModel = plpModel,
+  TrainingSet = TrainingSet$Train,
+  plpData = plpData,
+  populationSettings = populationSettings,
+  timeTofixat = 3592,
+  proptofixwith = 0.87,
+  intervalSolution= c(-100,100)
+)
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = list(censorModel = fitCensor$outcomesModel,
+                      outcomesModel = adjustedModel),
+  plpData = plpData,
+  population =  population,
+  populationSettings = populationSettings,
+  numberToSimulate = 2000
+)
+head(NewOutcomes)
+
+
+````
+# plotting the survival 
+the function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. we can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
+````{R, plottingsurvival,message= F}
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = population,
+  populationSettings = populationSettings,
+  numberToSimulate = 656
+)
+
+NewOutcomes2 <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = population,
+  populationSettings = populationSettings,
+  numberToSimulate = 656
+)
+
+ggplot2::ggplot()+
+  PlasmodeSim::KaplanMeierPlot( NewOutcomes )+
+  PlasmodeSim::KaplanMeierPlot( NewOutcomes2 )+
+  PlasmodeSim::KaplanMeierPlot( TrainingSet$Test$labels, colour = 'red' )+
+  ggplot2::xlim(c(0,120))
+
+````
+

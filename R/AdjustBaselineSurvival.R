@@ -35,8 +35,7 @@ AdjustBaselineSurvival <- function(plpModel,
       exp_lp = log(1 - .data$value) / log(baselineSurvival)
     )
 
-
-  expbetaz <- prediction$exp_lp # avoid this.
+  expbetaz <- prediction$exp_lp
 
   BaselineSurv <- plpModel$model$baselineSurvival
   BaseLinePropAtFixedTime <- BaselineSurv$surv[which(BaselineSurv$time== timeTofixat)]
