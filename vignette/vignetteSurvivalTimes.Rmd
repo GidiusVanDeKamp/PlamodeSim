@@ -5,16 +5,79 @@ output:
   html_document: default
 date: "2022-11-10"
 ---
+\tableofcontents 
+first we make sure we have the uptodate package
+````{R, message= F}
+remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 
-# Survival times outcomes. 
-## first we make a training set.
+````
+## Loading the plpData
+````{r, load the data set,message= F }
+connectionDetails <- Eunomia::getEunomiaConnectionDetails()
+
+# create the database
+Eunomia::createCohorts(
+  connectionDetails = connectionDetails,
+  cdmDatabaseSchema = 'main',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort'
+)
+
+# ------------------------------------------------------------------------------
+# Points PatientLevelPredictionPackage to the Eunomia database
+# Tells Eunomia to extract the cohort stored with id = 4 as the target cohort
+# and cohort with id = 3 as the outcome cohort. The other settings (...Schema)
+# tell the database where to look for the target and the outcome cohorts
+# ------------------------------------------------------------------------------
+databaseDetails <- PatientLevelPrediction::createDatabaseDetails(
+  connectionDetails = connectionDetails,
+  cdmDatabaseId = "eunomia",
+  cdmDatabaseSchema = 'main',
+  cdmDatabaseName = 'Eunomia',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort',
+  target = 4,
+  outcomeDatabaseSchema = 'main',
+  outcomeTable = 'cohort',
+  outcomeId = 3,
+  cdmVersion = 5
+)
+
+# Use ?FeatureExtraction::createCovariateSettings to see what the options are
+# There are a lot...
+covariateSettings <- FeatureExtraction::createCovariateSettings(
+  useDemographicsGender = TRUE,
+  useDemographicsAgeGroup = TRUE,
+  useConditionGroupEraLongTerm = TRUE,
+  useDrugGroupEraLongTerm = TRUE,
+  endDays = -1,
+  longTermStartDays = -365
+)
+
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  studyStartDate = '20000101',
+  studyEndDate = '20200101',
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+# issue with studyStartDate/studyEndDate
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+plpData <- PatientLevelPrediction::getPlpData(
+  databaseDetails = databaseDetails,
+  covariateSettings = covariateSettings,
+  restrictPlpDataSettings = restrictPlpDataSettings
+)
+````
+## Defining a training set.
 
 For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the plpModel, we also need a model for the censoring.
 First we make the traing set.
 ````{R, message= F}
-plpData <- PatientLevelPrediction::loadPlpData(
-  "~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_democox/Data" )
-
 
 
 populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
@@ -70,7 +133,7 @@ TrainingSet <- PlasmodeSim::MakeTraingSet(
 )
 
 ````
-## Fit the model 
+## Fitting the model 
 To fit the model we make the modelsettings and we run the function `fitModelWithCensoring`.
 ````{R, message= F}
 
@@ -85,7 +148,7 @@ fitCensor <- PlasmodeSim::fitModelWithCensoring(
 
 ````
 
-## Generate new outcomes from a population. 
+## Generating new outcomes times 
 ````{R, create newout ,message= F}
 population <- PatientLevelPrediction::createStudyPopulation(
   plpData = plpData,
@@ -114,7 +177,7 @@ newdata <- PlasmodeSim::simulateSurvivaltimes(
 head(newdata)
 ````
 
-## Make an unfitted model
+## Defining an unfitted model
 
 ````{R,make unfittedmodel, message= F  }
 # makeCoxModel. 
@@ -142,7 +205,7 @@ newdata <- PlasmodeSim::simulateSurvivaltimes(
 head(newdata)
 ````
 
-## Make an unfitted model with censoring 
+## Defining an unfitted model with censoring 
 
 ````{R,unfittedmodel with censoring ,message= F }
 #we can swap outcomes with censoring. 
@@ -160,7 +223,7 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
 head(NewOutcomes)
 ````
 
-# Adjust the BaselineSurvival 
+# Adjusting the BaselineSurvival 
 
 ````{R, adjust baseline surv,message= F  }
 adjustedModel <- PlasmodeSim::AdjustBaselineSurvival(
@@ -185,7 +248,7 @@ head(NewOutcomes)
 
 
 ````
-# plotting the survival 
+# Plotting Kaplan Meier estimates
 the function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. we can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
 ````{R, plottingsurvival,message= F}
 
