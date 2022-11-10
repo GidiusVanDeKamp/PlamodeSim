@@ -16,16 +16,16 @@ fitModelWithCensoring <- function(Trainingset,  #do now Trainingset$Train
                                                 analysisId = "outcome_model")
 
  censoringPop <- Trainingset
-  # censoringPop$labels <- censoringPop$labels %>%
-  #   dplyr::mutate(
-  #     outcomeCount = as.numeric(!(as.logical(.data$outcomeCount)))
-  #   )
+  censoringPop$labels <- censoringPop$labels %>%
+    dplyr::mutate(
+      outcomeCount = as.numeric(!(as.logical(.data$outcomeCount)))
+    )
 
-censoringPop$labels <- censoringPop$labels %>%
-  dplyr::mutate(
-    survivalTime = timeAtRisk,
-    outcomeCount = (timeAtRisk != 7300)*1  # make this mode general this is the enddate.
-  )
+# censoringPop$labels <- censoringPop$labels %>%
+#   dplyr::mutate(
+#     survivalTime = timeAtRisk,
+#     outcomeCount = (timeAtRisk != 7300)*1  # make this mode general this is the enddate.
+#   )
 
 
   fitCensoring <- PatientLevelPrediction::fitPlp(trainData = censoringPop,
