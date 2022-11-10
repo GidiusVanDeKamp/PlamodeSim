@@ -15,7 +15,7 @@ fitModelWithCensoring <- function(Trainingset,  #do now Trainingset$Train
                                                 modelSettings = modelSettings,
                                                 analysisId = "outcome_model")
 
-  # censoringPop <- Trainingset
+ censoringPop <- Trainingset
   # censoringPop$labels <- censoringPop$labels %>%
   #   dplyr::mutate(
   #     outcomeCount = as.numeric(!(as.logical(.data$outcomeCount)))
