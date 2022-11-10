@@ -33,7 +33,7 @@ MakeTraingSet(
 \item{outcomeId}{the outcomeID}
 }
 \value{
-returns the prediction with an extra column
+returns prepares the data calls splitdata ect
 }
 \description{
 hello

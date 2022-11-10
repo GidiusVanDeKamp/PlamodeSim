@@ -30,7 +30,7 @@ AdjustBaselineSurvival(
 \item{intervalSolution}{as this function solves an equation is needs an inteval for finding the solution.}
 }
 \value{
-returns a modified Baselinesurvivalfunction
+returns the same plpmodel but with a modified Baselinesurvivalfunction
 }
 \description{
 adjust an Baseline Survival function such that the overal event rate is fixed

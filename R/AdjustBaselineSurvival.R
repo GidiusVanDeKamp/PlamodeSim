@@ -8,7 +8,7 @@
 #' @param proptofixwith probabilities to fix
 #' @param intervalSolution as this function solves an equation is needs an inteval for finding the solution.
 #'
-#' @return returns a modified Baselinesurvivalfunction
+#' @return returns the same plpmodel but with a modified Baselinesurvivalfunction
 #' @export
 #'
 #' @importFrom rlang .data

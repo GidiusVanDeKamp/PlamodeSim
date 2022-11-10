@@ -3,7 +3,7 @@
 #' @param Trainingset the dataset used for traing the model.
 #' @param modelSettings the modelSettings
 #'
-#' @return returns a data set with new outcomes
+#' @return returns a list with two models. one for the outcomes and one for the censoring times
 #' @export
 #'
 #' @importFrom rlang .data

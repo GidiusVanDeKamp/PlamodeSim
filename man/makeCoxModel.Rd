@@ -21,7 +21,7 @@ makeCoxModel(
 \item{featureEngineering}{the featureEngineering}
 }
 \value{
-returns a dataframe with newOutcomes and subjectId
+returns a unfitted model
 }
 \description{
 makes an not fitted model

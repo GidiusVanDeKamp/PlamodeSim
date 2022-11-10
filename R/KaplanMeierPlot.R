@@ -1,7 +1,7 @@
 #' predict censoring times
 #'
 #' @param Data dataframe
-#' @return returns KaplanMeier plot
+#' @return returns KaplanMeier plot works with ggplot
 #'
 #' @export
 #'

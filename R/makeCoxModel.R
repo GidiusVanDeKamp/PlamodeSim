@@ -6,7 +6,7 @@
 #' @param timesofbaselinhazard data set with parameters with rows called betas and covariateIds
 #' @param featureEngineering the featureEngineering
 #'
-#' @return returns a dataframe with newOutcomes and subjectId
+#' @return returns a unfitted model
 #' @export
 #'
 makeCoxModel<- function( coefficients,

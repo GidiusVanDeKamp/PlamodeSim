@@ -1,7 +1,8 @@
 #' predict censoring times
 #'
-#' @param plpModel
-#' @return returns survivalfunction ro plot
+#' @param plpModel the plpmodel that has an baselinesurvival
+#' @param colour one can specify the colour just as in ggplot.
+#' @return adds the baselinesurvival from the model to the plot
 #'
 #' @export
 #'

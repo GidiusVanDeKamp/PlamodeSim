@@ -10,7 +10,7 @@ KaplanMeierPlot(Data, colour = "grey")
 \item{Data}{dataframe}
 }
 \value{
-returns KaplanMeier plot
+returns KaplanMeier plot works with ggplot
 }
 \description{
 predict censoring times

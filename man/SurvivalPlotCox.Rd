@@ -6,8 +6,13 @@
 \usage{
 SurvivalPlotCox(plpModel, colour = "red")
 }
+\arguments{
+\item{plpModel}{the plpmodel that has an baselinesurvival}
+
+\item{colour}{one can specify the colour just as in ggplot.}
+}
 \value{
-returns survivalfunction ro plot
+adds the baselinesurvival from the model to the plot
 }
 \description{
 predict censoring times

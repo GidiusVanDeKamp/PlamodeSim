@@ -6,7 +6,7 @@
 #' @param populationSettings the populationSettings
 #' @param numberToSimulate number of people to simulate new outcomes for.
 #'
-#' @return returns a data set with new outcomes
+#' @return returns a data set with new outcomes or censoring times
 #'
 #' @export
 #'

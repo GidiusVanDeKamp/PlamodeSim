@@ -24,7 +24,7 @@ simulateSurvivaltimesWithCensoring(
 \item{numberToSimulate}{number of people to simulate new outcomes for.}
 }
 \value{
-returns a data set with new outcomes
+returns a data set with new outcomes or censoring times
 }
 \description{
 predict censoring times

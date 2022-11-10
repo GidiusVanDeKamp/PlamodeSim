@@ -179,7 +179,7 @@ First we make the traing set.
 ````{R, message= F}
 # plpData <- PatientLevelPrediction::loadPlpData(
 #   "~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_democox/Data" )
-# 
+
 
 
 populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(

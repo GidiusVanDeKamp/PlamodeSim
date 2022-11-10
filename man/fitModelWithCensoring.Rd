@@ -12,7 +12,7 @@ fitModelWithCensoring(Trainingset, modelSettings)
 \item{modelSettings}{the modelSettings}
 }
 \value{
-returns a data set with new outcomes
+returns a list with two models. one for the outcomes and one for the censoring times
 }
 \description{
 predict censoring times

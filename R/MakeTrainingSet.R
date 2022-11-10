@@ -9,7 +9,7 @@
 #' @param featureEngineeringSettings the featureEngineeringSettings.
 #' @param outcomeId the outcomeID
 #'
-#' @return returns the prediction with an extra column
+#' @return returns prepares the data calls splitdata ect
 #' @export
 #'
 MakeTraingSet <- function(plpData,
