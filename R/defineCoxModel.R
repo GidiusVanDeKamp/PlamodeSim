@@ -9,7 +9,7 @@
 #' @return returns a unfitted model
 #' @export
 #'
-makeCoxModel<- function( coefficients,
+defineCoxModel<- function( coefficients,
                          baselinehazard,
                          timesofbaselinhazard,
                          featureEngineering = NULL ){

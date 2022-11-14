@@ -7,16 +7,17 @@ date: "2022-11-10"
 ---
 \tableofcontents 
 \newpage
+
 first we make sure we have the uptodate package
 ````{R, message= F}
 remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 
 ````
-# survival times
+# Survival times
 In this part we will show how to simulate new survivaltimes. 
 For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel, we also need a model for the censoring.
 
-# Loading the plpData
+## Loading the plpData
 The first step is to load the data where we will simulate new outcomes for. here we use the package eunomia for a accessting some data. then we pick the settings for the data we want to use, we call this data the plpData. 
 
 ````{r, load the data set,message= F }
@@ -177,16 +178,16 @@ head(newdata)
 ````
 
 ## Defining an unfitted model
+we can define an model cox by specifying the coefficients and 
 
 ````{R,make unfittedmodel, message= F  }
-# makeCoxModel. 
 
 plpModel <- fitCensor$outcomesModel
 coeff <- plpModel$model$coefficients
 survival <- plpModel$model$baselineSurvival$surv
 times <- plpModel$model$baselineSurvival$time
 
-unfittedmodel <- PlasmodeSim::makeCoxModel(
+unfittedmodel <- PlasmodeSim::DefineCoxModel(
   coefficients = coeff,
   baselinehazard = survival,
   timesofbaselinhazard = times,
@@ -222,7 +223,7 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
 head(NewOutcomes)
 ````
 
-# Adjusting the BaselineSurvival 
+## Adjusting the BaselineSurvival 
 
 ````{R, adjust baseline surv,message= F  }
 adjustedModel <- PlasmodeSim::AdjustBaselineSurvival(
@@ -247,8 +248,8 @@ head(NewOutcomes)
 
 
 ````
-# Plotting Kaplan Meier estimates
-the function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. we can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
+## Plotting Kaplan Meier estimates
+the function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. We can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
 ````{R, plottingsurvival,message= F}
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
@@ -275,11 +276,12 @@ ggplot2::ggplot()+
 
 ````
 
-# possible extencions 
+## Possible extencions 
 
-Here is a list of future extentions to make the package more usefull:
+Here is a list of future extensions to make the package more useful:
 
 * The runPlasmode should have a working analysisId, analysisName and logsettings, like runPlp has. 
 * one could extend the fitmodel by adding an option for a differen model for the censoring. 
-* is it me
+* take a look at the feature ingeneering in the `definecoxmodel` function
+* add more functions that make unfitted models.  
 
