@@ -6,12 +6,19 @@ output:
 date: "2022-11-10"
 ---
 \tableofcontents 
+\newpage
 first we make sure we have the uptodate package
 ````{R, message= F}
 remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 
 ````
-## Loading the plpData
+# survival times
+In this part we will show how to simulate new survivaltimes. 
+For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel, we also need a model for the censoring.
+
+# Loading the plpData
+The first step is to load the data where we will simulate new outcomes for. here we use the package eunomia for a accessting some data. then we pick the settings for the data we want to use, we call this data the plpData. 
+
 ````{r, load the data set,message= F }
 connectionDetails <- Eunomia::getEunomiaConnectionDetails()
 
@@ -22,7 +29,6 @@ Eunomia::createCohorts(
   cohortDatabaseSchema = 'main',
   cohortTable = 'cohort'
 )
-
 # ------------------------------------------------------------------------------
 # Points PatientLevelPredictionPackage to the Eunomia database
 # Tells Eunomia to extract the cohort stored with id = 4 as the target cohort
@@ -74,11 +80,9 @@ plpData <- PatientLevelPrediction::getPlpData(
 )
 ````
 ## Defining a training set.
+Most of the time we split the dataset into training and a test set. For this purpose we have the function `MakeTraingSet`.
 
-For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the plpModel, we also need a model for the censoring.
-First we make the traing set.
 ````{R, message= F}
-
 
 populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
   binary = TRUE,
@@ -134,7 +138,9 @@ TrainingSet <- PlasmodeSim::MakeTraingSet(
 
 ````
 ## Fitting the model 
-To fit the model we make the modelsettings and we run the function `fitModelWithCensoring`.
+
+We pick the desired model by setting the modelsettings. Then we can run the function `fitModelWithCensoring`.
+This function fits two models one with censoring and one with out the censoring. It stored these models in a list. 
 ````{R, message= F}
 
 modelSettings <- PatientLevelPrediction::setCoxModel()
@@ -142,36 +148,29 @@ modelSettings <- PatientLevelPrediction::setCoxModel()
 fitCensor <- PlasmodeSim::fitModelWithCensoring( 
   Trainingset = TrainingSet$Train,
   modelSettings = modelSettings 
-  # now i have only one model setting
-  # should i change this to two seperate settings
 )
 
 ````
 
 ## Generating new outcomes times 
+
+now that we have our model with the censoring, we can simulate new data. We call the function `simulateSurvivaltimesWithCensoring` 
 ````{R, create newout ,message= F}
-population <- PatientLevelPrediction::createStudyPopulation(
-  plpData = plpData,
-  outcomeId = 3,
-  populationSettings = populationSettings
-)
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = fitCensor,
   plpData = plpData,
-  population = population,
+  population = TrainingSet$Train$labels,
   populationSettings = populationSettings,
   numberToSimulate = 10
 )
 head(NewOutcomes)
 
-#for simulation the uncensored data
-
 newdata <- PlasmodeSim::simulateSurvivaltimes(
   plpModel = fitCensor$outcomesModel,
   plpData = plpData,
   numberToSimulate = 10,
-  population = population,
+  population = TrainingSet$Train$labels,
   populationSettings = populationSettings
 )
 head(newdata)
@@ -198,7 +197,7 @@ newdata <- PlasmodeSim::simulateSurvivaltimes(
   plpModel = unfittedmodel,
   plpData = plpData,
   numberToSimulate = 10,
-  population = population,
+  population = TrainingSet$Train$labels,
   populationSettings = populationSettings
 )
 
@@ -215,7 +214,7 @@ unfittedcensor<- list(censorModel = unfittedmodel,
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = unfittedcensor,
   plpData = plpData,
-  population =  population,
+  population =  TrainingSet$Train$labels,
   populationSettings = populationSettings,
   numberToSimulate = 200
 )
@@ -238,9 +237,9 @@ adjustedModel <- PlasmodeSim::AdjustBaselineSurvival(
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = list(censorModel = fitCensor$outcomesModel,
-                      outcomesModel = adjustedModel),
+                     outcomesModel = adjustedModel),
   plpData = plpData,
-  population =  population,
+  population =  TrainingSet$Train$labels,
   populationSettings = populationSettings,
   numberToSimulate = 2000
 )
@@ -255,24 +254,32 @@ the function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given d
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = fitCensor,
   plpData = plpData,
-  population = population,
+  population = TrainingSet$Train$labels,
   populationSettings = populationSettings,
-  numberToSimulate = 656
+  numberToSimulate = 1974
 )
 
 NewOutcomes2 <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = fitCensor,
   plpData = plpData,
-  population = population,
+  population = TrainingSet$Train$labels,
   populationSettings = populationSettings,
-  numberToSimulate = 656
+  numberToSimulate = 1974
 )
 
 ggplot2::ggplot()+
   PlasmodeSim::KaplanMeierPlot( NewOutcomes )+
   PlasmodeSim::KaplanMeierPlot( NewOutcomes2 )+
-  PlasmodeSim::KaplanMeierPlot( TrainingSet$Test$labels, colour = 'red' )+
+  PlasmodeSim::KaplanMeierPlot( TrainingSet$Train$labels, colour = 'red' )+
   ggplot2::xlim(c(0,120))
 
 ````
+
+# possible extencions 
+
+Here is a list of future extentions to make the package more usefull:
+
+* The runPlasmode should have a working analysisId, analysisName and logsettings, like runPlp has. 
+* one could extend the fitmodel by adding an option for a differen model for the censoring. 
+* is it me
 
