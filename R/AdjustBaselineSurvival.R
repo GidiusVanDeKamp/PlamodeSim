@@ -48,6 +48,6 @@ AdjustBaselineSurvival <- function(plpModel,
 
   newBaselineSurv <- BaselineSurv$surv^delta
 
-  makeCoxModel( plpModel$model$coefficients,  newBaselineSurv, BaselineSurv$time )%>%
+  defineCoxModel( plpModel$model$coefficients,  newBaselineSurv, BaselineSurv$time )%>%
   return()
 }
