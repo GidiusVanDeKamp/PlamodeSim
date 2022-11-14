@@ -13,7 +13,7 @@ greenLine <- function(plpData,
                       youroutcomeId){
 
   indexOutcome <- (plpData$outcomes %>%
-                     dplyr::filter( outcomeId == youroutcomeId) %>% #change 3 to new variable called outcomeid
+                     dplyr::filter( .data$outcomeId == youroutcomeId) %>% #change 3 to new variable called outcomeid
                      dplyr::select(.data$rowId) )[[1]]
 
   indexesCovariate <- (plpData$covariateData$covariates %>%

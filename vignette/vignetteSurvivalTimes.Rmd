@@ -187,7 +187,7 @@ coeff <- plpModel$model$coefficients
 survival <- plpModel$model$baselineSurvival$surv
 times <- plpModel$model$baselineSurvival$time
 
-unfittedmodel <- PlasmodeSim::DefineCoxModel(
+unfittedmodel <- PlasmodeSim::defineCoxModel(
   coefficients = coeff,
   baselinehazard = survival,
   timesofbaselinhazard = times,
@@ -283,5 +283,5 @@ Here is a list of future extensions to make the package more useful:
 * The runPlasmode should have a working analysisId, analysisName and logsettings, like runPlp has. 
 * one could extend the fitmodel by adding an option for a differen model for the censoring. 
 * take a look at the feature ingeneering in the `definecoxmodel` function
-* add more functions that make unfitted models.  
+* add more functions that define unfitted models.  
 

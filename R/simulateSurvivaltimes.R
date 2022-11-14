@@ -43,7 +43,7 @@ simulateSurvivaltimes <- function(plpModel,
 
   #props<- matrix(0,numberToSimulate,length(baselineSurv))
 
-  toreturn<- data.frame(rowId= index)
+  toreturn<- data.frame(.data$rowId= index)
 
   baselineTimes<- c(0,baselineTimes)
   # i think the inf should be skipped/it is unnecessary
@@ -51,8 +51,8 @@ simulateSurvivaltimes <- function(plpModel,
   for( i in 1:numberToSimulate){
     id <- index[i]
     expbetalp <-  (predictionOutcome %>%
-                     dplyr::filter(rowId == id) %>%
-                     dplyr::select( exp_lp))$exp_lp
+                     dplyr::filter(.data$rowId == id) %>%
+                     dplyr::select( .data$exp_lp))$exp_lp
 
     props<- baselineSurv^expbetalp
     toreturn$outcome[i] <- baselineTimes[sum((props>uniformSample[i])*1)+1]

@@ -1,6 +1,8 @@
 #' predict censoring times
 #'
 #' @param Data dataframe
+#' @param colour something that ggplot accepts as a colour.
+#'
 #' @return returns KaplanMeier plot works with ggplot
 #'
 #' @export

@@ -1,3 +1,4 @@
+#' simuates a new dataset.
 #'
 #' @param outcomeId the outcomeID
 #' @param plpdata the plpdata
@@ -15,7 +16,7 @@
 #' @export
 #'
 #'
-runPlasmode <- function(plpdata,
+runPlasmode <- function(plpData,
                         outcomeId,
                         populationSettings,
                         splitSettings,

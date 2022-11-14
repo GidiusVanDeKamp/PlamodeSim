@@ -67,7 +67,7 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
   uniformSampleOutcome <- stats::runif(numberToSimulate)
   uniformSampleCensor <- stats::runif(numberToSimulate)
 
-  toreturn<- data.frame(rowId= index)
+  toreturn<- data.frame(.data$rowId= index)
 
   baselineTimesOutcome<- c(0,baselineTimesOutcome)
   baselineTimesCensor<- c(0,baselineTimesCensor)
@@ -77,10 +77,10 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
   for( i in 1:numberToSimulate){
     id <- index[i]
     expbetalpOutcome <-  (predictionOutcome %>%
-                            dplyr::filter(rowId == id) %>%
+                            dplyr::filter(.data$rowId == id) %>%
                             dplyr::select( exp_lp))$exp_lp
     expbetalpCensor <-  (predictionCensor %>%
-                           dplyr::filter(rowId == id) %>%
+                           dplyr::filter(.data$rowId == id) %>%
                            dplyr::select( exp_lp))$exp_lp
 
     propsOutcome <- baselineSurvOutcome^expbetalpOutcome
@@ -92,11 +92,11 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
 
   toreturn%>%
     dplyr::mutate(survivalTime = pmin(
-      outcomeTime,censorTime),
-      outcomeCount = ((survivalTime==outcomeTime)*1)*
+      outcomeTime,.data$censorTime),
+      outcomeCount = ((.data$survivalTime==.data$outcomeTime)*1)*
         ((survivalTime < censorTime )*1)
     )%>%
-    dplyr::select(rowId, survivalTime, outcomeCount)%>%
+    dplyr::select(.data$rowId, .data$survivalTime, .data$outcomeCount)%>%
     return()
 }
 
