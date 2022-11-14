@@ -5,7 +5,7 @@
 \title{simuates a new dataset.}
 \usage{
 runPlasmode(
-  plpdata,
+  plpData,
   outcomeId,
   populationSettings,
   splitSettings,
@@ -18,7 +18,7 @@ runPlasmode(
 )
 }
 \arguments{
-\item{plpdata}{the plpdata}
+\item{plpData}{the plpdata}
 
 \item{outcomeId}{the outcome id}
 

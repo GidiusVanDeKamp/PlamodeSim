@@ -43,7 +43,7 @@ simulateSurvivaltimes <- function(plpModel,
 
   #props<- matrix(0,numberToSimulate,length(baselineSurv))
 
-  toreturn<- data.frame(.data$rowId= index)
+  toreturn<- data.frame(rowId = index)
 
   baselineTimes<- c(0,baselineTimes)
   # i think the inf should be skipped/it is unnecessary

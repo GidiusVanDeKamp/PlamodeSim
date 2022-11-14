@@ -67,7 +67,7 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
   uniformSampleOutcome <- stats::runif(numberToSimulate)
   uniformSampleCensor <- stats::runif(numberToSimulate)
 
-  toreturn<- data.frame(.data$rowId= index)
+  toreturn<- data.frame(rowId= index)
 
   baselineTimesOutcome<- c(0,baselineTimesOutcome)
   baselineTimesCensor<- c(0,baselineTimesCensor)

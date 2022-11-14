@@ -8,6 +8,8 @@ KaplanMeierPlot(Data, colour = "grey")
 }
 \arguments{
 \item{Data}{dataframe}
+
+\item{colour}{something that ggplot accepts as a colour.}
 }
 \value{
 returns KaplanMeier plot works with ggplot

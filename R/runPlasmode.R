@@ -1,7 +1,7 @@
 #' simuates a new dataset.
 #'
 #' @param outcomeId the outcomeID
-#' @param plpdata the plpdata
+#' @param plpData the plpdata
 #' @param outcomeId the outcome id
 #' @param populationSettings as made with createStudyPopulationSettings()
 #' @param splitSettings as made with createDefaultSplitSetting()
