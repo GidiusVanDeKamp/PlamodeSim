@@ -30,6 +30,7 @@ visualOutcomeCovariateId2 <- function(
     newoutcomes <- stats::rbinom(noPersons, 1, newprops[index,'value'])
 
     newout <- data.frame(rowId = index, newOutcomes= newoutcomes )
+
     obs <- sum(newoutcomes)/noPersons
     obsfreq <- obsfreq %>%
                append(obs)

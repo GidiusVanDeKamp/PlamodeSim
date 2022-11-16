@@ -8,8 +8,16 @@
 #'
 newOutcomes<- function( noPersons, props ){
 
-  index <-  sample(1:dim(props)[1], noPersons, replace=T)
-  newOutcomes <- stats::rbinom(noPersons, 1, props[index,'value'])
+  index <-  sort(sample( props$rowId , noPersons, replace=T))
 
-  return(data.frame(rowId = index, newOutcomes= newOutcomes ) ) # change the indexing
+  pickedprops <- props %>%
+    dplyr::filter( rowId %in% !!index) %>%
+    dplyr::arrange( rowId)%>%
+    dplyr::select( value)
+
+  #return(pickedprops)
+  newOutcomes <- stats::rbinom(noPersons, 1, pickedprops$value)
+
+
+  return(data.frame(rowId = index, outcomeCount= newOutcomes ) ) # change the indexing
 }

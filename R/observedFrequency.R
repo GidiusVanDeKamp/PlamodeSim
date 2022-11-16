@@ -11,7 +11,7 @@
 observedFrequency <- function( data, plpData, studyCovariateId ){
 
   indexOutcome <- ( data %>%
-                    dplyr::filter(newOutcomes == 1) %>%
+                    dplyr::filter(outcomeCount == 1) %>%
                     dplyr::select(.data$rowId))[[1]]
 
   withOutcomeAndCovariate <- (plpData$covariateData$covariates %>%
