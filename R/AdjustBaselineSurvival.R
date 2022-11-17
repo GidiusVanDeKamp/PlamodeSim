@@ -4,8 +4,8 @@
 #' @param TrainingSet the training used for fitting the model, is used for adjusting the model
 #' @param plpData the plpData
 #' @param populationSettings the populationsettings.
-#' @param timeTofixat a time in days to fix the eventrate at. has to be in the times of the baseline survival
-#' @param proptofixwith probabilities to fix
+#' @param timeToFixAt a time in days to fix the eventrate at. has to be in the times of the baseline survival
+#' @param propToFixWith probabilities to fix
 #' @param intervalSolution as this function solves an equation is needs an inteval for finding the solution.
 #'
 #' @return returns the same plpmodel but with a modified Baselinesurvivalfunction
@@ -13,12 +13,12 @@
 #'
 #' @importFrom rlang .data
 
-AdjustBaselineSurvival <- function(plpModel,
+adjustBaselineSurvival <- function(plpModel,
                                    TrainingSet,
                                    plpData,
                                    populationSettings,
-                                   timeTofixat,
-                                   proptofixwith,
+                                   timeToFixAt,
+                                   propToFixWith,
                                    intervalSolution= c(-100,100)){
 
   prediction <- PatientLevelPrediction::predictPlp(
@@ -38,10 +38,10 @@ AdjustBaselineSurvival <- function(plpModel,
   expbetaz <- prediction$exp_lp
 
   BaselineSurv <- plpModel$model$baselineSurvival
-  BaseLinePropAtFixedTime <- BaselineSurv$surv[which(BaselineSurv$time== timeTofixat)]
+  BaseLinePropAtFixedTime <- BaselineSurv$surv[which(BaselineSurv$time== timeToFixAt)]
 
   funToSolve <- function(delta){
-    mean(BaseLinePropAtFixedTime^(expbetaz*delta)) -1+ proptofixwith %>%
+    mean(BaseLinePropAtFixedTime^(expbetaz*delta)) -1+ propToFixWith %>%
     return()
   }
   delta<- stats::uniroot(funToSolve, intervalSolution)$root

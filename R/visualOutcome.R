@@ -22,7 +22,7 @@ visualOutcome <- function( plpData,
   for(i in 1:noSimulations){
     newout <- newOutcomes(noPersons ,newprops )
     obsfreq<- obsfreq %>%
-      append(sum(newout$newOutcomes)/ noPersons)
+      append(sum(newout$outcomeCount)/ noPersons)
   }
   obsfreq= data.frame('obsfreq'= obsfreq)
 

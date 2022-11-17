@@ -14,12 +14,11 @@ remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 
 ````
 # Survival times
-In this part we will show how to simulate new survivaltimes. 
-For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel, we also need a model for the censoring.
+In this part we will show how to simulate new survival times. 
+For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel.
 
 ## Loading the plpData
-The first step is to load the data where we will simulate new outcomes for. here we use the package eunomia for a accessting some data. then we pick the settings for the data we want to use, we call this data the plpData. 
-
+The first step is to load the data where we will simulate new outcomes for. Here we use the package eunomia for a accessing some data set.
 ````{r, load the data set,message= F }
 connectionDetails <- Eunomia::getEunomiaConnectionDetails()
 
@@ -81,7 +80,7 @@ plpData <- PatientLevelPrediction::getPlpData(
 )
 ````
 ## Defining a training set.
-Most of the time we split the dataset into training and a test set. For this purpose we have the function `MakeTraingSet`.
+Most of the time we split the dataset into training and a test set. In order to prepare the data for fitting the model we have the function `MakeTraingSet`. What copies features of the function `patientLevelPrediction::runPlp`. In order to run it we have to create our settings: `populationSettings,executeSettings,splitSettings,sampleSettings,featureEngineeringSettings,preprocessSettings`. besides all these settings it also needs the plpData and the outcomeId. 
 
 ````{R, message= F}
 
@@ -126,6 +125,7 @@ preprocessSettings <- PatientLevelPrediction::createPreprocessSettings(
   normalize = TRUE,
   removeRedundancy = TRUE
 )
+
 TrainingSet <- PlasmodeSim::MakeTraingSet(
   plpData = plpData,
   executeSettings = executeSettings,
@@ -138,10 +138,10 @@ TrainingSet <- PlasmodeSim::MakeTraingSet(
 )
 
 ````
-## Fitting the model 
+## Fitting the model with censoring
 
-We pick the desired model by setting the modelsettings. Then we can run the function `fitModelWithCensoring`.
-This function fits two models one with censoring and one with out the censoring. It stored these models in a list. 
+We pick the desired model by setting the `modelsettings`. Then we can run the function `fitModelWithCensoring`.
+This function fits two plpModels one for the censoring and one for outcomes, both of the type specified in the modelsettings. It stores these plpModels in a list. 
 ````{R, message= F}
 
 modelSettings <- PatientLevelPrediction::setCoxModel()
@@ -166,7 +166,11 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   numberToSimulate = 10
 )
 head(NewOutcomes)
+````
 
+Since the censoring model Stores to models as a list one can easily generate unsensored outcomes by doing:
+
+````{R,message =F}
 newdata <- PlasmodeSim::simulateSurvivaltimes(
   plpModel = fitCensor$outcomesModel,
   plpData = plpData,
@@ -178,7 +182,7 @@ head(newdata)
 ````
 
 ## Defining an unfitted model
-we can define an model cox by specifying the coefficients and 
+just as before we can define a model that hasnt been fitted to the data. we specifu a cox by specifying the coefficients/parameters and the baseline. 
 
 ````{R,make unfittedmodel, message= F  }
 
@@ -191,7 +195,7 @@ unfittedmodel <- PlasmodeSim::defineCoxModel(
   coefficients = coeff,
   baselinehazard = survival,
   timesofbaselinhazard = times,
-  featureEngineering = NULL #  = NULL is the standart setting. 
+  featureEngineering = NULL #  = NULL is the standard setting. 
 )
 
 newdata <- PlasmodeSim::simulateSurvivaltimes(
@@ -206,6 +210,7 @@ head(newdata)
 ````
 
 ## Defining an unfitted model with censoring 
+There is no function to define an unfitted model with censoring. That is because this can be done easily by making to cox models and storing them in a list. this elements in this list should have the names `censorModel` and `outcomeModel`
 
 ````{R,unfittedmodel with censoring ,message= F }
 #we can swap outcomes with censoring. 
@@ -224,15 +229,16 @@ head(NewOutcomes)
 ````
 
 ## Adjusting the BaselineSurvival 
+If one want to get a grip on the outcome count on a specific time one can call the function `adjustBaselineSurvival`. this changes the base line function of a model such that, For the training data at the specified time the outcome rate is a specified probability. since this function solves an equation it needs an specified interval to find this solution. 
 
 ````{R, adjust baseline surv,message= F  }
-adjustedModel <- PlasmodeSim::AdjustBaselineSurvival(
+adjustedModel <- PlasmodeSim::adjustBaselineSurvival( 
   plpModel = plpModel,
   TrainingSet = TrainingSet$Train,
   plpData = plpData,
   populationSettings = populationSettings,
-  timeTofixat = 3592,
-  proptofixwith = 0.87,
+  timeToFixAt = 3592,
+  propToFixWith = 0.87,
   intervalSolution= c(-100,100)
 )
 
@@ -284,5 +290,5 @@ Here is a list of future extensions to make the package more useful:
 * one could extend the fitmodel by adding an option for a differen model for the censoring. 
 * take a look at the feature ingeneering in the `definecoxmodel` function
 * add more functions that define unfitted models.  
-* make it faster by filtering the population only the row ids drawn. 
+* make it faster by filtering the population on the row ids drawn, before making their outcomes. 
 
