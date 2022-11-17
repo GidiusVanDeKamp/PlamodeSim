@@ -6,15 +6,21 @@ output:
     df_print: paged
 date: "2022-10-19"
 ---
-Welcome to the vignette about the R package PlasmodeSim. This package is still under development.
-This package goal is to simulate a new outcomes for real patients data where the outcomes follow a specified model.
+\tableofcontents 
+\newpage
 
-## installing plasmodeSim using remotes
-To install using `remotes` run:
-```{r, install}
-#install.packages("remotes")
-#remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
+Welcome to the vignette about the R package PlasmodeSim. This package is still under development.
+This package goal is to simulate new outcomes for real patients data. The outcome will follow model you specify.
+
+## Installing plasmodeSim using remotes
+One can easily install the package using `remotes`, run:
+```{r, install, eval = F }
+install.packages("remotes")
+remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 ```
+\newpage
+
+# Logistic Regression 
 
 ## Setting up
 To start we need a plpModel and plpData. For information how to obtain these one can look at: https://ohdsi.github.io/PatientLevelPrediction/articles/BuildingPredictiveModels.html 
@@ -41,18 +47,18 @@ In this example we obtain new outcomes following a fitted logistic model. We sta
 plpModelLog <- plpResultLogistic$model
 
 plpPrediction <- PatientLevelPrediction::predictPlp(
-  plpModel =plpModelLog,
-  plpData= plpData,
+  plpModel = plpModelLog,
+  plpData = plpData,
   population = plpData$cohorts
 )
 
 ```` 
-When running the function predictPlp it returnes some information. 
+When running the function predictPlp it returns some information. 
 
 ````{r}
 newOut <- PlasmodeSim::newOutcomes(
   noPersons = 200,
-  props=  plpPrediction
+  props = plpPrediction
 )
 head(newOut)
 
@@ -75,51 +81,15 @@ For the logistic model it is necessary that the parameters are stored in a datas
 ````{r,message=F}
 plpModelunfitted <- PlasmodeSim::makeLogisticModel(UnfittedParameters)
 newprobs <- PatientLevelPrediction::predictPlp(
-  plpModel =plpModelunfitted,
-  plpData=plpData,
-  population= plpData$cohorts
+  plpModel = plpModelunfitted,
+  plpData = plpData,
+  population = plpData$cohorts
 )
-newOut <- PlasmodeSim::newOutcomes(2000, newprobs)
+newOut <- PlasmodeSim::newOutcomes(
+  noPersons = 2000,
+  props = newprobs
+)
 head(newOut)
-
-# 
-# newOut <- dplyr::distinct(newOut,rowId, .keep_all= TRUE)
-# 
-# modelSettings <- PatientLevelPrediction::setLassoLogisticRegression()
-# splitSettings <- PatientLevelPrediction::createDefaultSplitSetting()
-# 
-# populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
-#   binary = T,
-#   includeAllOutcomes = FALSE,
-#   firstExposureOnly = FALSE,
-#   washoutPeriod = 180,
-#   removeSubjectsWithPriorOutcome = FALSE,
-#   priorOutcomeLookback = 99999,
-#   requireTimeAtRisk = TRUE,
-#   minTimeAtRisk = 364,
-#   riskWindowStart = 1,
-#   startAnchor = 'cohort start',
-#   riskWindowEnd = 365,
-#   endAnchor = 'cohort start'
-# )
-# 
-# population <- PatientLevelPrediction::createStudyPopulation(plpData , 3, populationSettings)
-# population <- dplyr::filter(population, rowId %in% newOut$rowId)
-# population <- dplyr::left_join(population, newOut, by = 'rowId') 
-# head(population)
-# population <- dplyr::mutate(population, outcomeCount = outcomeCount.y)
-# population <- dplyr::select(population,-outcomeCount.y, -outcomeCount.x)
-# 
-# 
-# population$outcomeCount 
-# 
-#   
-# trainData <- PatientLevelPrediction::splitData(plpData= plpData, population = population, splitSettings)
-# weirdFit <- PatientLevelPrediction::fitPlp(trainData$Train,
-#                                            modelSettings,
-#                                            analysisId = 'firstTry')
-# 
-# weirdFit$model$coefficients
 
 ````
 
@@ -142,7 +112,7 @@ PlasmodeSim::visualOutcome(
 )
 ````
 
-Here we have plotted 50 times the frequency of the outcome for a simulated dataset with 200 people. We can see that the outcome count for the fitted parameters is similar tot the original dataset, but when changeing the parameters the outcome count also changes. 
+Here we have plotted 50 times the frequency of the outcome for a simulated dataset with 200 people. We can see that the outcome count for the fitted parameters is similar as in the original dataset, but when changing the parameters the outcome count also changes. 
 
 ## Visual of a specific covariate
 Say we are interested in the outcomes of a group with a specific covariate. Here we picked the third covariate in the model to visualise. 
@@ -179,3 +149,293 @@ PlasmodeSim::visualOutcomeCovariateId2(
 As one can see `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are very similiar, they both calculate and plot the frequency for a group with a specific covariate present. The small difference is that `visualOutcomeCovariateId` filters a newly simulated dataset set to only keep the patients where the covariate is present, and `visualOutcomeCovariateId2` only simulates new outcomes for patients that have the covariate present. 
 We see they are almost the identical only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are larger. 
 Again we see that when picking the fitted parameters the outcome count for patients with a specific covariate is similar as it was in the original data set.
+
+# Survival times
+In this part we will show how to simulate new survival times. 
+For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel.
+
+## Loading the plpData
+The first step is to load the data where we will simulate new outcomes for. Here we use the package eunomia for a accessing some data set.
+````{r, load the data set,message= F }
+connectionDetails <- Eunomia::getEunomiaConnectionDetails()
+
+Eunomia::createCohorts(
+  connectionDetails = connectionDetails,
+  cdmDatabaseSchema = 'main',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort'
+)
+
+databaseDetails <- PatientLevelPrediction::createDatabaseDetails(
+  connectionDetails = connectionDetails,
+  cdmDatabaseId = "eunomia",
+  cdmDatabaseSchema = 'main',
+  cdmDatabaseName = 'Eunomia',
+  cohortDatabaseSchema = 'main',
+  cohortTable = 'cohort',
+  target = 4,
+  outcomeDatabaseSchema = 'main',
+  outcomeTable = 'cohort',
+  outcomeId = 3,
+  cdmVersion = 5
+)
+
+covariateSettings <- FeatureExtraction::createCovariateSettings(
+  useDemographicsGender = TRUE,
+  useDemographicsAgeGroup = TRUE,
+  useConditionGroupEraLongTerm = TRUE,
+  useDrugGroupEraLongTerm = TRUE,
+  endDays = -1,
+  longTermStartDays = -365
+)
+
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  studyStartDate = '20000101',
+  studyEndDate = '20200101',
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+restrictPlpDataSettings <- PatientLevelPrediction::createRestrictPlpDataSettings(
+  firstExposureOnly = TRUE,
+  washoutPeriod = 30
+)
+
+plpData <- PatientLevelPrediction::getPlpData(
+  databaseDetails = databaseDetails,
+  covariateSettings = covariateSettings,
+  restrictPlpDataSettings = restrictPlpDataSettings
+)
+````
+## Defining a training set.
+Most of the time we split the dataset into training and a test set. In order to prepare the data for fitting the model we have the function `MakeTraingSet`. What copies features of the function `patientLevelPrediction::runPlp`. In order to run it we have to create our settings: `populationSettings, executeSettings, splitSettings, sampleSettings, featureEngineeringSettings, preprocessSettings`. besides all these settings it also needs the plpData and the outcomeId. 
+
+````{R, message= F}
+
+populationSettings <- PatientLevelPrediction::createStudyPopulationSettings(
+  binary = TRUE,
+  includeAllOutcomes = FALSE,
+  firstExposureOnly = FALSE,
+  washoutPeriod = 180,
+  removeSubjectsWithPriorOutcome = FALSE,
+  priorOutcomeLookback = 99999,
+  requireTimeAtRisk = TRUE,
+  minTimeAtRisk = 1,
+  riskWindowStart = 1,
+  startAnchor = 'cohort start',
+  riskWindowEnd = 7300,
+  endAnchor = 'cohort start'
+)
+executeSettings <- PatientLevelPrediction::createExecuteSettings(
+  runSplitData = TRUE,
+  runSampleData = FALSE,
+  runfeatureEngineering = FALSE,
+  runPreprocessData = TRUE,
+  runModelDevelopment = TRUE,
+  runCovariateSummary = TRUE
+)
+splitSettings <- PatientLevelPrediction::createDefaultSplitSetting(
+  testFraction = 0.25,
+  trainFraction = 0.75,
+  splitSeed = 123,
+  nfold = 3,
+  type = 'stratified'
+)
+sampleSettings <- PatientLevelPrediction::createSampleSettings(
+  type = 'none'
+)
+featureEngineeringSettings <- 
+  PatientLevelPrediction::createFeatureEngineeringSettings(
+  type = 'none'
+)
+preprocessSettings <- PatientLevelPrediction::createPreprocessSettings(
+  minFraction = 0,
+  normalize = TRUE,
+  removeRedundancy = TRUE
+)
+
+TrainingSet <- PlasmodeSim::MakeTraingSet(
+  plpData = plpData,
+  executeSettings = executeSettings,
+  populationSettings = populationSettings,
+  splitSettings = splitSettings,
+  sampleSettings = sampleSettings,
+  preprocessSettings = preprocessSettings,
+  featureEngineeringSettings = featureEngineeringSettings,
+  outcomeId = 3
+)
+
+````
+## Fitting the model with censoring
+
+We pick the desired model by setting the `modelsettings`. Then we can run the function `fitModelWithCensoring`.
+This function fits two plpModels one for the censoring and one for outcomes, both of the type specified in the modelsettings. It stores these plpModels in a list. 
+````{R, message= F}
+
+modelSettings <- PatientLevelPrediction::setCoxModel()
+
+fitCensor <- PlasmodeSim::fitModelWithCensoring( 
+  Trainingset = TrainingSet$Train,
+  modelSettings = modelSettings 
+)
+
+````
+
+## Generating new outcomes times 
+
+Now that we have our model with the censoring, we can simulate new data. We call the function `simulateSurvivaltimesWithCensoring` 
+````{R, create newout ,message= F}
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = TrainingSet$Train$labels,
+  populationSettings = populationSettings,
+  numberToSimulate = 10
+)
+head(NewOutcomes)
+````
+
+Since the censoring model Stores to models as a list one can easily generate unsensored outcomes by doing:
+
+````{R,message =F}
+newdata <- PlasmodeSim::simulateSurvivaltimes(
+  plpModel = fitCensor$outcomesModel,
+  plpData = plpData,
+  numberToSimulate = 10,
+  population = TrainingSet$Train$labels,
+  populationSettings = populationSettings
+)
+head(newdata)
+````
+
+## Defining an unfitted model
+Just as before we can define a model that has not been fitted to the data. We specify a cox model by specifying the coefficients/parameters and the baseline survival function. 
+
+````{R,make unfittedmodel, message= F  }
+
+plpModel <- fitCensor$outcomesModel
+coeff <- plpModel$model$coefficients
+survival <- plpModel$model$baselineSurvival$surv
+times <- plpModel$model$baselineSurvival$time
+
+unfittedmodel <- PlasmodeSim::defineCoxModel(
+  coefficients = coeff,
+  baselinehazard = survival,
+  timesofbaselinhazard = times,
+  featureEngineering = NULL #  = NULL is the standard setting. 
+)
+
+newdata <- PlasmodeSim::simulateSurvivaltimes(
+  plpModel = unfittedmodel,
+  plpData = plpData,
+  numberToSimulate = 10,
+  population = TrainingSet$Train$labels,
+  populationSettings = populationSettings
+)
+
+head(newdata)
+````
+
+## Defining an unfitted model with censoring 
+There is no function to define an unfitted model with censoring. That is because this can be done easily by making to cox models and storing them in a list. This elements in this list should have the names `censorModel` and `outcomeModel`.
+
+````{R,unfittedmodel with censoring ,message= F }
+#we can swap outcomes with censoring. 
+unfittedcensor<- list(censorModel = unfittedmodel,
+                      outcomesModel = fitCensor$outcomesModel) 
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = unfittedcensor,
+  plpData = plpData,
+  population =  TrainingSet$Train$labels,
+  populationSettings = populationSettings,
+  numberToSimulate = 200
+)
+
+head(NewOutcomes)
+````
+
+## Adjusting the BaselineSurvival 
+If one want to get a grip on the outcome count on a specific time one can call the function `adjustBaselineSurvival`. This changes the base line function of a model such that, for the training data at the specified time the outcome rate is a specified probability. Since this function solves an equation it needs an specified interval to find this solution. 
+
+````{R, adjust baseline surv,message= F  }
+adjustedModel <- PlasmodeSim::adjustBaselineSurvival( 
+  plpModel = plpModel,
+  TrainingSet = TrainingSet$Train,
+  plpData = plpData,
+  populationSettings = populationSettings,
+  timeToFixAt = 3592,
+  propToFixWith = 0.87,
+  intervalSolution= c(-100,100)
+)
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = list(censorModel = fitCensor$outcomesModel,
+                     outcomesModel = adjustedModel),
+  plpData = plpData,
+  population =  TrainingSet$Train$labels,
+  populationSettings = populationSettings,
+  numberToSimulate = 2000
+)
+head(NewOutcomes)
+
+
+````
+## Plotting Kaplan Meier estimates
+The function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. We can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
+````{R, plottingsurvival,message= F}
+
+NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = TrainingSet$Train$labels,
+  populationSettings = populationSettings,
+  numberToSimulate = 1974
+)
+
+NewOutcomes2 <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = TrainingSet$Train$labels,
+  populationSettings = populationSettings,
+  numberToSimulate = 1974
+)
+
+ggplot2::ggplot()+
+  PlasmodeSim::KaplanMeierPlot( NewOutcomes )+
+  PlasmodeSim::KaplanMeierPlot( NewOutcomes2 )+
+  PlasmodeSim::KaplanMeierPlot( TrainingSet$Train$labels, colour = 'red' )+
+  ggplot2::xlim(c(0,120))
+
+````
+
+## runPlasmode
+
+the function runPlasmode returns some new simulated survivaltimes, from a model it fits. 
+
+````{R,runplas, message =F}
+runPlas <- PlasmodeSim::runPlasmode(
+  plpData = plpData,
+  outcomeId = 3,
+  populationSettings = populationSettings,
+  splitSettings = splitSettings,
+  sampleSettings = sampleSettings,
+  featureEngineeringSettings = featureEngineeringSettings,
+  preprocessSettings = preprocessSettings,
+  modelSettings = modelSettings,
+  executeSettings = executeSettings,
+  numberToSimulate = 5
+)
+runPlas
+````
+
+## Possible extencions 
+
+Here is a list of future extensions to make the package more useful:
+
+* The runPlasmode should have a working analysisId, analysisName and logsettings, like runPlp has. 
+* one could extend the fitmodel by adding an option for a Differen models for the censoring. 
+* Take a look at the feature ingeneering in the `definecoxmodel` function.
+* Add more functions that define unfitted models.  
+* Make it faster by filtering the population on the row ids drawn, before making their outcomes. 

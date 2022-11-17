@@ -155,7 +155,7 @@ fitCensor <- PlasmodeSim::fitModelWithCensoring(
 
 ## Generating new outcomes times 
 
-now that we have our model with the censoring, we can simulate new data. We call the function `simulateSurvivaltimesWithCensoring` 
+Now that we have our model with the censoring, we can simulate new data. We call the function `simulateSurvivaltimesWithCensoring` 
 ````{R, create newout ,message= F}
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
@@ -182,7 +182,7 @@ head(newdata)
 ````
 
 ## Defining an unfitted model
-just as before we can define a model that hasnt been fitted to the data. we specifu a cox by specifying the coefficients/parameters and the baseline. 
+Just as before we can define a model that has not been fitted to the data. We specify a cox model by specifying the coefficients/parameters and the baseline survival function. 
 
 ````{R,make unfittedmodel, message= F  }
 
@@ -210,7 +210,7 @@ head(newdata)
 ````
 
 ## Defining an unfitted model with censoring 
-There is no function to define an unfitted model with censoring. That is because this can be done easily by making to cox models and storing them in a list. this elements in this list should have the names `censorModel` and `outcomeModel`
+There is no function to define an unfitted model with censoring. That is because this can be done easily by making to cox models and storing them in a list. This elements in this list should have the names `censorModel` and `outcomeModel`
 
 ````{R,unfittedmodel with censoring ,message= F }
 #we can swap outcomes with censoring. 
@@ -229,7 +229,7 @@ head(NewOutcomes)
 ````
 
 ## Adjusting the BaselineSurvival 
-If one want to get a grip on the outcome count on a specific time one can call the function `adjustBaselineSurvival`. this changes the base line function of a model such that, For the training data at the specified time the outcome rate is a specified probability. since this function solves an equation it needs an specified interval to find this solution. 
+If one want to get a grip on the outcome count on a specific time one can call the function `adjustBaselineSurvival`. This changes the base line function of a model such that, for the training data at the specified time the outcome rate is a specified probability. Since this function solves an equation it needs an specified interval to find this solution. 
 
 ````{R, adjust baseline surv,message= F  }
 adjustedModel <- PlasmodeSim::adjustBaselineSurvival( 
@@ -255,7 +255,7 @@ head(NewOutcomes)
 
 ````
 ## Plotting Kaplan Meier estimates
-the function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. We can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
+The function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. We can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
 ````{R, plottingsurvival,message= F}
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
@@ -287,8 +287,8 @@ ggplot2::ggplot()+
 Here is a list of future extensions to make the package more useful:
 
 * The runPlasmode should have a working analysisId, analysisName and logsettings, like runPlp has. 
-* one could extend the fitmodel by adding an option for a differen model for the censoring. 
-* take a look at the feature ingeneering in the `definecoxmodel` function
-* add more functions that define unfitted models.  
-* make it faster by filtering the population on the row ids drawn, before making their outcomes. 
+* one could extend the fitmodel by adding an option for a Differen models for the censoring. 
+* Take a look at the feature ingeneering in the `definecoxmodel` function.
+* Add more functions that define unfitted models.  
+* Make it faster by filtering the population on the row ids drawn, before making their outcomes. 
 
