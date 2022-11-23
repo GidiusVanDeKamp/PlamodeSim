@@ -20,7 +20,7 @@ remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 ```
 \newpage
 
-# Logistic Regression/ binary outcomes 
+#  binary outcomes/ Logistic Regression 
 We start by simulating simple binary variables. In this vignette we use a logisitc regression as model, but one could also pick other models that can be implemented as a `plpModel`. 
 ## Setting up
 To start we need a plpModel and plpData. For information how to obtain these one can look at: https://ohdsi.github.io/PatientLevelPrediction/articles/BuildingPredictiveModels.html 
@@ -150,7 +150,7 @@ As one can see `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are ve
 We see they are almost the identical only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are larger. 
 Again we see that when picking the fitted parameters the outcome count for patients with a specific covariate is similar as it was in the original data set.
 
-# Survival times
+# Survival times/ cox model
 In this part we will show how to simulate new survival times. 
 For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel.
 
