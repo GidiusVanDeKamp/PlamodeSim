@@ -20,7 +20,7 @@ remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 ```
 \newpage
 
-#  binary outcomes/ Logistic Regression 
+#  Binary outcomes/ Logistic Regression 
 We start by simulating simple binary variables. In this vignette we use a logisitc regression as model, but one could also pick other models that can be implemented as a `plpModel`. 
 ## Setting up
 To start we need a plpModel and plpData. For information how to obtain these one can look at: https://ohdsi.github.io/PatientLevelPrediction/articles/BuildingPredictiveModels.html 
@@ -150,7 +150,7 @@ As one can see `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are ve
 We see they are almost the identical only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are larger. 
 Again we see that when picking the fitted parameters the outcome count for patients with a specific covariate is similar as it was in the original data set.
 
-# Survival times/ cox model
+# Survival times/ Cox model
 In this part we will show how to simulate new survival times. 
 For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel.
 
@@ -376,7 +376,7 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   plpData = plpData,
   population =  TrainingSet$Train$labels,
   populationSettings = populationSettings,
-  numberToSimulate = 2000
+  numberToSimulate = 200
 )
 head(NewOutcomes)
 
@@ -409,37 +409,43 @@ ggplot2::ggplot()+
   ggplot2::xlim(c(0,120))
 
 ````
-We see that the newly generated data follows the original distribution. However it seems that the outcomes are more frequent in the original dataset. 
+We see that the newly generated data follows the original distribution. However it seems that the outcomes are more frequent in the original dataset. We can also generate datasets where all the patients have one specific covariate present, we do this with the function `simulateSurvivaltimesWithCensoringCovariate`. This function works similar as `simulateSurvivaltimesWithCensoring` but filters the population to make sure the covariate specified is present.
 
 ````{R,plotingcovariateskaplan ,message =F}
 fitCensor$outcomesModel$model$coefficients[2,1] <- 0.5 
-fitCensor$outcomesModel$model$coefficients[2,2]
+fitCensor$outcomesModel$model$coefficients[2,2] # red
 
-fitCensor$outcomesModel$model$coefficients[3,1] <- 0
-fitCensor$outcomesModel$model$coefficients[3,2] 
+fitCensor$outcomesModel$model$coefficients[3,1] <- 0 
+fitCensor$outcomesModel$model$coefficients[3,2] # orange 
 
-fitCensor$outcomesModel$model$coefficients[4,1] <- -0.75
-fitCensor$outcomesModel$model$coefficients[4,2] 
+fitCensor$outcomesModel$model$coefficients[4,1] <- -0.75 
+fitCensor$outcomesModel$model$coefficients[4,2] # yellow
 
-numbertosimulate  <- 2000
-newOut1 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(fitCensor,
-                                                       plpData,
-                                                       TrainingSet$Train$labels,
-                                                       populationSettings,
-                                                       numbertosimulate,
-                                                       8003 )
-newOut2 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(fitCensor,
-                                                       plpData,
-                                                       TrainingSet$Train$labels,
-                                                       populationSettings,
-                                                       numbertosimulate,
-                                                       9003 )
-newOut3 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(fitCensor,
-                                                       plpData,
-                                                       TrainingSet$Train$labels,
-                                                       populationSettings,
-                                                       numbertosimulate,
-                                                       8507001 )
+numberToSimulate  <- 2000
+newOut1 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(
+  censorModel = fitCensor,
+  plpData = plpData,
+  population = TrainingSet$Train$labels,
+  populationSettings = populationSettings,
+  numberToSimulate = numberToSimulate,
+  covariateToStudy = 8003 
+)
+newOut2 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(
+  censorModel = fitCensor,
+  plpData= plpData,
+  population=  TrainingSet$Train$labels,
+  populationSettings=populationSettings,
+  numberToSimulate=numberToSimulate,
+  covariateToStudy = 9003 
+)
+newOut3 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(
+  censorModel = fitCensor,
+  plpData= plpData,
+  population=TrainingSet$Train$labels,
+  populationSettings=populationSettings,
+  numberToSimulate=numberToSimulate,
+  covariateToStudy = 8507001 
+)
 
 ggplot2::ggplot()+
   PlasmodeSim::KaplanMeierPlot( newOut1, colour = 'red')+

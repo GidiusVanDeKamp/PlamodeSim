@@ -17,8 +17,8 @@ visualOutcomeCovariateId2 <- function(
                      noPersons,
                      parameters
                      ){
-  plpModel<- makeLogisticModel(parameters)
-  newprops<- PatientLevelPrediction::predictPlp(plpModel, plpData,plpData$cohorts)
+  plpModel <- makeLogisticModel(parameters)
+  newprops <- PatientLevelPrediction::predictPlp(plpModel, plpData, plpData$cohorts)
 
   obsfreq<- c()
   indexesWithCovariate <- (plpData$covariateData$covariates %>%
@@ -29,7 +29,7 @@ visualOutcomeCovariateId2 <- function(
     index <-  sample(indexesWithCovariate, noPersons, replace=T)
     newoutcomes <- stats::rbinom(noPersons, 1, newprops[index,'value'])
 
-    newout <- data.frame(rowId = index, newOutcomes= newoutcomes )
+    newout <- data.frame(rowId = index, newOutcomes = newoutcomes )
 
     obs <- sum(newoutcomes)/noPersons
     obsfreq <- obsfreq %>%
@@ -39,9 +39,6 @@ visualOutcomeCovariateId2 <- function(
   obsfreq <- data.frame(freq = obsfreq)
   plotGreenLine <- greenLine(plpData,
                              restrictToCovariateId,3)
-
-  #indexstudycov<- which(restrictToCovariateId== plpResult$covariateSummary$covariateId )
-
 
   ggplot2::ggplot(obsfreq, ggplot2::aes(.data$freq))+
   ggplot2::geom_histogram(binwidth=0.05)+

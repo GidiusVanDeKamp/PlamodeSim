@@ -59,15 +59,6 @@ simulateSurvivaltimesWithCensoringCovariate <- function(censorModel,
       exp_lp = log(1 - .data$value) / log(baselineSurvivalCensor)
     )
 
-  # newOutcomesCensoredSurvivalTimes2(  # i think i should remake this function better.
-  #   plpModelCensoring = modelCensor,
-  #   expbetasCensor = predictionCensor$exp_lp ,
-  #   plpModel = modelOutcomes,
-  #   expbetas = predictionOutcome$exp_lp,
-  #   numberToSimulate
-  # )%>%
-
-
   baselineSurvOutcome <- modelOutcomes$model$baselineSurvival$surv
   baselineTimesOutcome <- modelOutcomes$model$baselineSurvival$time
 
@@ -83,8 +74,6 @@ simulateSurvivaltimesWithCensoringCovariate <- function(censorModel,
   baselineTimesOutcome<- c(0,baselineTimesOutcome)
   baselineTimesCensor<- c(0,baselineTimesCensor)
 
-  # i think the inf should be skipped/it is unnecessary
-
   for( i in 1:numberToSimulate){
     id <- index[i]
     expbetalpOutcome <-  (predictionOutcome %>%
@@ -97,17 +86,16 @@ simulateSurvivaltimesWithCensoringCovariate <- function(censorModel,
     propsOutcome <- baselineSurvOutcome^expbetalpOutcome
     propsCensor  <- baselineSurvCensor^expbetalpCensor
 
-    toreturn$outcomeTime[i] <- baselineTimesOutcome[sum((propsOutcome>uniformSampleOutcome[i])*1)+1]
-    toreturn$censorTime[i] <- baselineTimesCensor[sum((propsCensor>uniformSampleCensor[i])*1)+1]
+    toreturn$outcomeTime[i] <- baselineTimesOutcome[sum((propsOutcome > uniformSampleOutcome[i])*1)+1]
+    toreturn$censorTime[i] <- baselineTimesCensor[sum((propsCensor > uniformSampleCensor[i])*1)+1]
   }
 
-  toreturn%>%
-    dplyr::mutate(survivalTime = pmin(
-      outcomeTime,.data$censorTime),
-      outcomeCount = ((.data$survivalTime==.data$outcomeTime)*1)*
-        ((survivalTime < censorTime )*1)
-    )%>%
-    dplyr::select(.data$rowId, .data$survivalTime, .data$outcomeCount)%>%
+  toreturn %>%
+    dplyr::mutate(
+      survivalTime = pmin( outcomeTime, .data$censorTime),
+      outcomeCount = ((.data$survivalTime == .data$outcomeTime)*1)*((survivalTime < censorTime )*1)
+    ) %>%
+    dplyr::select(.data$rowId, .data$survivalTime, .data$outcomeCount) %>%
     return()
 }
 

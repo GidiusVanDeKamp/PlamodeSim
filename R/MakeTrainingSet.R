@@ -23,9 +23,10 @@ MakeTraingSet <- function(plpData,
 
 
   population <- tryCatch({
-    do.call(PatientLevelPrediction::createStudyPopulation, list(plpData = plpData,
-                                        outcomeId = outcomeId, populationSettings = populationSettings,
-                                        population = plpData$population))
+    do.call(PatientLevelPrediction::createStudyPopulation,
+            list(plpData = plpData,
+                 outcomeId = outcomeId, populationSettings = populationSettings,
+                 population = plpData$population))
   }, error = function(e) {
     ParallelLogger::logError(e)
     return(NULL)
@@ -39,14 +40,15 @@ MakeTraingSet <- function(plpData,
 
   data<- plpData
   # i am not sure what should happen when executesettings$runsplitdata = False
-#
+  #
   if(executeSettings$runSplitData){
     # split the data (test/train/cv) + summarise at the end
     data <- tryCatch(
       {
-        do.call(PatientLevelPrediction::splitData,list(plpData = data,
-                                                       population = population,
-                                                       splitSettings = splitSettings))
+        do.call(PatientLevelPrediction::splitData,
+                list(plpData = data,
+                     population = population,
+                     splitSettings = splitSettings))
       },
       error = function(e){ParallelLogger::logError(e); return(NULL)}
     )

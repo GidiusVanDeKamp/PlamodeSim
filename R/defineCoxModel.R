@@ -14,13 +14,18 @@ defineCoxModel<- function( coefficients,
                          timesofbaselinhazard,
                          featureEngineering = NULL ){
 
-  baselineSurvival <- list(time= timesofbaselinhazard, surv= baselinehazard)
+  baselineSurvival <- list(time= timesofbaselinhazard,
+                           surv= baselinehazard)
   modelType <- 'cox'
-  model <- list(baselineSurvival = baselineSurvival, modelType = modelType, coefficients = coefficients)
-   # $preprocessing$featureEngineering : is needed
-  preprocessing <- list(featureEngineering= featureEngineering)
+  model <- list(baselineSurvival = baselineSurvival,
+                modelType = modelType,
+                coefficients = coefficients)
 
-  Toreturn <- list(model=model,preprocessing= preprocessing)
+    preprocessing <- list(featureEngineering= featureEngineering)
+
+  Toreturn <- list(model = model,
+                   preprocessing = preprocessing)
+
   attr(Toreturn, 'class') <- 'plpModel'
   attr(Toreturn,"predictionFunction") <- "predictCyclops"
   attr(Toreturn,"modelType") <- "survival"

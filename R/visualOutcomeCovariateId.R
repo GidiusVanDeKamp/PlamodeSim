@@ -11,29 +11,25 @@
 #'
 #' @importFrom rlang .data
 #'
-visualOutcomeCovariateId <- function(
-                     plpData,
-                     studyCovariateId,
-                     noSimulations,
-                     noPersons,
-                     parameters
-                     ){
+visualOutcomeCovariateId <- function(plpData,
+                                     studyCovariateId,
+                                     noSimulations,
+                                     noPersons,
+                                     parameters){
 
-  plpModel<- makeLogisticModel(parameters)
-  newprops<- PatientLevelPrediction::predictPlp(plpModel, plpData,plpData$cohorts)
+  plpModel <- makeLogisticModel(parameters)
+  newprops <- PatientLevelPrediction::predictPlp(plpModel, plpData, plpData$cohorts)
 
   obsfreq<- c()
   for(i in 1:noSimulations){
     newout <- newOutcomes(noPersons ,newprops )
-    obsfreq<- obsfreq %>%
-              append(observedFrequency(newout,plpData ,studyCovariateId ))
+    obsfreq <- obsfreq %>%
+               append(observedFrequency(newout, plpData, studyCovariateId ))
 
   }
   obsfreq <- data.frame(freq= obsfreq)
   plotGreenLine <- greenLine(plpData,
                              studyCovariateId,3)
-
-  #indexstudycov<- which(studyCovariateId==plpResult$covariateSummary$covariateId )
 
   ggplot2::ggplot(obsfreq, ggplot2::aes(.data$freq))+
   ggplot2::geom_histogram(binwidth=0.05)+

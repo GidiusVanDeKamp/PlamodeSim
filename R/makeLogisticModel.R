@@ -12,15 +12,19 @@ makeLogisticModel<- function( parameters){
   modelDesign  <- ""
   covariateId <- (parameters[-1,"covariateIds"])
 
-  normFactors <- data.frame(covariateId = covariateId, maxValue = rep(1,length(parameters[1])))
-  preprocessing  <- list(featureEngineering= NULL,tidyCovariates= list(normFactors=normFactors ) ) # cannot be zero
+  normFactors <- data.frame(covariateId = covariateId,
+                            maxValue = rep(1,length(parameters[1])))
+
+  preprocessing  <- list(featureEngineering = NULL,
+                         tidyCovariates = list(normFactors= normFactors ))
+
   model <- list(modelType= "logistic", coefficients= parameters)
 
-  mademod <- list(covariateImportance= covariateImportance,
-                  trainDetails= trainDetails,
-                  modelDesign= modelDesign,
-                  preprocessing= preprocessing,
-                  model= model
+  mademod <- list(covariateImportance = covariateImportance,
+                  trainDetails = trainDetails,
+                  modelDesign = modelDesign,
+                  preprocessing = preprocessing,
+                  model = model
   )
 
   # what do these mean? i just added them so it will work.

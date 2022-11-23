@@ -33,20 +33,17 @@ simulateSurvivaltimes <- function(plpModel,
     dplyr::mutate(
       exp_lp = log(1 - .data$value) / log(baselineSurvivalOutcome)
     )
-  # now we have what we need to simulate
+  # now we have what we need in order to simulate
 
-  baselineSurv <- plpModel$model$baselineSurvival$surv #not used
+  baselineSurv <- plpModel$model$baselineSurvival$surv
   baselineTimes <- plpModel$model$baselineSurvival$time
 
   index <-  sample(predictionOutcome$rowId, numberToSimulate, replace=T)
   uniformSample <- stats::runif(numberToSimulate)
 
-  #props<- matrix(0,numberToSimulate,length(baselineSurv))
-
   toreturn<- data.frame(rowId = index)
 
   baselineTimes<- c(0,baselineTimes)
-  # i think the inf should be skipped/it is unnecessary
 
   for( i in 1:numberToSimulate){
     id <- index[i]

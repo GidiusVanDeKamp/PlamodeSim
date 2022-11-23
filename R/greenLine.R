@@ -13,7 +13,7 @@ greenLine <- function(plpData,
                       youroutcomeId){
 
   indexOutcome <- (plpData$outcomes %>%
-                     dplyr::filter( .data$outcomeId == youroutcomeId) %>% #change 3 to new variable called outcomeid
+                     dplyr::filter( .data$outcomeId == youroutcomeId) %>%
                      dplyr::select(.data$rowId) )[[1]]
 
   indexesCovariate <- (plpData$covariateData$covariates %>%
@@ -23,12 +23,12 @@ greenLine <- function(plpData,
                          dplyr::collect( )%>%
                          as.numeric())[[1]]
 
-  indexesCovariateAndOutcome <- (plpData$covariateData$covariates %>%
+  indexesCovariateAndOutcome <- plpData$covariateData$covariates %>%
                                    dplyr::filter( .data$covariateId == studyCovariateId & .data$rowId %in% indexOutcome) %>%
                                    dplyr::select( .data$rowId) %>%
                                    dplyr::count()%>%
                                    dplyr::collect( )%>%
-                                   as.numeric())
+                                   as.numeric()
 
   return(indexesCovariateAndOutcome/indexesCovariate)
 }

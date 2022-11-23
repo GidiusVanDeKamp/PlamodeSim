@@ -41,8 +41,6 @@ runPlasmode <- function(plpData,
   fitCensor <- PlasmodeSim::fitModelWithCensoring(
     Trainingset = TrainingSet$Train,
     modelSettings = modelSettings
-    # now i have only one model setting
-    # should i change this to two seperate settings
   )
 
   NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(

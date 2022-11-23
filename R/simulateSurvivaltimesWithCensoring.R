@@ -48,15 +48,6 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
       exp_lp = log(1 - .data$value) / log(baselineSurvivalCensor)
     )
 
-  # newOutcomesCensoredSurvivalTimes2(  # i think i should remake this function better.
-  #   plpModelCensoring = modelCensor,
-  #   expbetasCensor = predictionCensor$exp_lp ,
-  #   plpModel = modelOutcomes,
-  #   expbetas = predictionOutcome$exp_lp,
-  #   numberToSimulate
-  # )%>%
-
-
   baselineSurvOutcome <- modelOutcomes$model$baselineSurvival$surv
   baselineTimesOutcome <- modelOutcomes$model$baselineSurvival$time
 
@@ -67,10 +58,10 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
   uniformSampleOutcome <- stats::runif(numberToSimulate)
   uniformSampleCensor <- stats::runif(numberToSimulate)
 
-  toreturn<- data.frame(rowId= index)
+  toreturn<- data.frame(rowId = index)
 
-  baselineTimesOutcome<- c(0,baselineTimesOutcome)
-  baselineTimesCensor<- c(0,baselineTimesCensor)
+  baselineTimesOutcome<- c(0, baselineTimesOutcome)
+  baselineTimesCensor<- c(0, baselineTimesCensor)
 
   # i think the inf should be skipped/it is unnecessary
 
@@ -78,10 +69,12 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
     id <- index[i]
     expbetalpOutcome <-  (predictionOutcome %>%
                             dplyr::filter(.data$rowId == id) %>%
-                            dplyr::select( exp_lp))$exp_lp
+                            dplyr::select( exp_lp)
+                          )$exp_lp
     expbetalpCensor <-  (predictionCensor %>%
                            dplyr::filter(.data$rowId == id) %>%
-                           dplyr::select( exp_lp))$exp_lp
+                           dplyr::select( exp_lp)
+                         )$exp_lp
 
     propsOutcome <- baselineSurvOutcome^expbetalpOutcome
     propsCensor  <- baselineSurvCensor^expbetalpCensor
@@ -91,13 +84,11 @@ simulateSurvivaltimesWithCensoring <- function(censorModel,
   }
 
   toreturn%>%
-    dplyr::mutate(survivalTime = pmin(
-      outcomeTime,.data$censorTime),
-      outcomeCount = ((.data$survivalTime==.data$outcomeTime)*1)*
-        ((survivalTime < censorTime )*1)
+    dplyr::mutate(
+      survivalTime = pmin(outcomeTime, .data$censorTime),
+      outcomeCount = ((.data$survivalTime == .data$outcomeTime)*1)*((survivalTime < censorTime )*1)
     )%>%
     dplyr::select(.data$rowId, .data$survivalTime, .data$outcomeCount)%>%
     return()
 }
-
 
