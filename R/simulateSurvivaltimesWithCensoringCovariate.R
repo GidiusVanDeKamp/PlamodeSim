@@ -26,7 +26,7 @@ simulateSurvivaltimesWithCensoringCovariate <- function(censorModel,
                             dplyr::collect())$rowId
 
   population <- population %>%
-    dplyr::filter(.data$rowId %in% rowIdsWithCovariate)
+    dplyr::filter(rowId %in% rowIdsWithCovariate)
 
   modelCensor <- censorModel$censorModel
   modelOutcomes <- censorModel$outcomesModel
