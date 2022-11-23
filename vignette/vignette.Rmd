@@ -10,7 +10,7 @@ date: "2022-10-19"
 \newpage
 
 Welcome to the vignette about the R package PlasmodeSim. This package is still under development.
-This package goal is to simulate new outcomes for real patients data. The outcome will follow model you specify.
+The goal of this package is to simulate new outcomes for real patients data. This way one can obtain outcomes that follow a model you specify.
 
 ## Installing plasmodeSim using remotes
 One can easily install the package using `remotes`, run:
@@ -20,8 +20,8 @@ remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 ```
 \newpage
 
-# Logistic Regression 
-
+# Logistic Regression/ binary outcomes 
+We start by simulating simple binary variables. In this vignette we use a logisitc regression as model, but one could also pick other models that can be implemented as a `plpModel`. 
 ## Setting up
 To start we need a plpModel and plpData. For information how to obtain these one can look at: https://ohdsi.github.io/PatientLevelPrediction/articles/BuildingPredictiveModels.html 
 In this documents we load them from a save file:
@@ -63,11 +63,11 @@ newOut <- PlasmodeSim::newOutcomes(
 head(newOut)
 
 ````
-The rowId in the output of `newOutcomes` are the rowId of patients that are drawn randomly with the same probability, the patients could be drawn multiple times. If a rowId happens to be in the output twice they can have a different outcome. The function `newOutcomes` needs a data set that contains the columns `rowId` and `value`. The column called `value` contains the probabilities used in generating the new outcomes.
+The column called rowId in the output of `newOutcomes` are the rowId's of patients that are drawn randomly with the same probability, the patients could be drawn multiple times. If a rowId happens to be in the output twice they can have a different outcome, but have the same probability distribution. The function `newOutcomes` needs a data set that contains the columns `rowId` and `value`. The column called `value` contains the probability of seeing an outcome.
 
 ## Example 2 simulation from unfittedmodel
 
-We here we show how to simulate outcomes from an unfitted logistic model. We use the function `makeLogisiticModel` to specify a logistic model.  
+We here we show how to simulate outcomes from an unfitted logistic model. We use the function `makeLogisiticModel` to specify a logistic model. 
 
 ````{R, ex2,message=F } 
 Parameters <- plpModelLog$model$coefficients
@@ -76,7 +76,7 @@ UnfittedParameters[1,1] <- -0.4
 UnfittedParameters[3:5,1] <- 0.4
 head(UnfittedParameters)
 ````
-For the logistic model it is necessary that the parameters are stored in a dataset with a column called `betas` and a column called `covariateIds`. The function `makeLogisitcModel` makes a plpModel from the specified parameters.
+For the logistic model it is necessary that the parameters are stored in a dataset with a column called `betas` and a column called `covariateIds`. The function `makeLogisitcModel` makes a plpModel from the specified parameters. The parameters have are given in a data frame with columns called betas and covariateIds. The column called betas has the parameters of the model as numeric values. The columns called covariateIds has its elements stored as a string being '(Intercept)' or a covariateId. 
 
 ````{r,message=F}
 plpModelunfitted <- PlasmodeSim::makeLogisticModel(UnfittedParameters)
@@ -96,7 +96,7 @@ head(newOut)
 ## Visual simulations
 
 The function `visualOutcome` simulates new data and then plots the frequency of the outcome.
-Right now the function `visualOutcome` only works for a logistic model. The green line in the plots is the average outcome in the original dataset. 
+Right now the function `visualOutcome` only works for a logistic model. The green line in the plots is the average outcome in the original data set. 
 ````{r, visual, message= F, out.width = "60%"}
 PlasmodeSim::visualOutcome(
   plpData = plpData,
@@ -155,7 +155,7 @@ In this part we will show how to simulate new survival times.
 For simulating new censored survival times we need more than one probability, we use the baselinehazard, stored in the a plpModel.
 
 ## Loading the plpData
-The first step is to load the data where we will simulate new outcomes for. Here we use the package eunomia for a accessing some data set.
+The first step is to load the data where we will simulate new outcomes for. Here we use the package eunomia for accessing some data set.
 ````{r, load the data set,message= F }
 connectionDetails <- Eunomia::getEunomiaConnectionDetails()
 
@@ -208,7 +208,7 @@ plpData <- PatientLevelPrediction::getPlpData(
 )
 ````
 ## Defining a training set.
-Most of the time we split the dataset into training and a test set. In order to prepare the data for fitting the model we have the function `MakeTraingSet`. What copies features of the function `patientLevelPrediction::runPlp`. In order to run it we have to create our settings: `populationSettings, executeSettings, splitSettings, sampleSettings, featureEngineeringSettings, preprocessSettings`. besides all these settings it also needs the plpData and the outcomeId. 
+Most of the time we split the dataset into training and a test set. In order to prepare the data for fitting the model we have the function `MakeTraingSet`. What copies features of the function `patientLevelPrediction::runPlp`. In order to run it we have to create our settings: `populationSettings, executeSettings, splitSettings, sampleSettings, featureEngineeringSettings, preprocessSettings`. Besides all these settings it also needs the plpData and the outcomeId. 
 
 ````{R, message= F}
 
@@ -269,7 +269,7 @@ TrainingSet <- PlasmodeSim::MakeTraingSet(
 ## Fitting the model with censoring
 
 We pick the desired model by setting the `modelsettings`. Then we can run the function `fitModelWithCensoring`.
-This function fits two plpModels one for the censoring and one for outcomes, both of the type specified in the modelsettings. It stores these plpModels in a list. 
+This function fits two plpModels one for the censoring and one for outcomes, both of the type specified in the modelsettings. It stores these plpModels as a list. 
 ````{R, message= F}
 
 modelSettings <- PatientLevelPrediction::setCoxModel()
@@ -283,7 +283,7 @@ fitCensor <- PlasmodeSim::fitModelWithCensoring(
 
 ## Generating new outcomes times 
 
-Now that we have our model with the censoring, we can simulate new data. We call the function `simulateSurvivaltimesWithCensoring` 
+Now that we have our model with the censoring specified, we can simulate new outcomes. We call the function `simulateSurvivaltimesWithCensoring`. It uses the populationSettings for finding the last time that can be included in the outcome times. 
 ````{R, create newout ,message= F}
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
@@ -296,7 +296,7 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
 head(NewOutcomes)
 ````
 
-Since the censoring model Stores to models as a list one can easily generate unsensored outcomes by doing:
+Since the censoring model Stores two models as a list one can easily generate uncensored outcomes by using the function `simulateSurvivaltimes`. One could also use this function for generating censoring times.  
 
 ````{R,message =F}
 newdata <- PlasmodeSim::simulateSurvivaltimes(
@@ -309,8 +309,8 @@ newdata <- PlasmodeSim::simulateSurvivaltimes(
 head(newdata)
 ````
 
-## Defining an unfitted model
-Just as before we can define a model that has not been fitted to the data. We specify a cox model by specifying the coefficients/parameters and the baseline survival function. 
+## Defining an unfitted model without censoring
+Just as before we can define a model that has not been fitted to the data. We specify a cox model by specifying the two sets of coefficients/parameters and two baseline survival functions. 
 
 ````{R,make unfittedmodel, message= F  }
 
@@ -338,7 +338,7 @@ head(newdata)
 ````
 
 ## Defining an unfitted model with censoring 
-There is no function to define an unfitted model with censoring. That is because this can be done easily by making to cox models and storing them in a list. This elements in this list should have the names `censorModel` and `outcomeModel`.
+There is no function to define an unfitted model with censoring. However this can be done easily by making to cox models and storing them in a list. This elements in this list should have the names `censorModel` and `outcomeModel`. In this example we use the unfitted model, specified in the code above, for the outcomes and use the fitted censoring model.
 
 ````{R,unfittedmodel with censoring ,message= F }
 #we can swap outcomes with censoring. 
@@ -357,7 +357,7 @@ head(NewOutcomes)
 ````
 
 ## Adjusting the BaselineSurvival 
-If one want to get a grip on the outcome count on a specific time one can call the function `adjustBaselineSurvival`. This changes the base line function of a model such that, for the training data at the specified time the outcome rate is a specified probability. Since this function solves an equation it needs an specified interval to find this solution. 
+If one want to get a grip on the outcome count on a specific time one can call the function `adjustBaselineSurvival`. This can be useful for when one wants multiple data sets that have different parameters, but with the same frequency of outcomes. The function `adjustBaselineSurvival` changes the base line function of a model such that, for the training data at the specified time the outcome rate is a specified probability. Since this function solves an equation it needs an specified interval to find this solution. 
 
 ````{R, adjust baseline surv,message= F  }
 adjustedModel <- PlasmodeSim::adjustBaselineSurvival( 
@@ -383,7 +383,7 @@ head(NewOutcomes)
 
 ````
 ## Plotting Kaplan Meier estimates
-The function `kaplanMeierPlot` visualised the kamplanmeier estimate of a given dataset. It works with ggplot. We can easily compare the simulated data sets with the real dataset by putting them in one plot. For the true data set we set the colour to red. 
+The function `kaplanMeierPlot` visualizes the Kaplan Meier estimate of a given data set. It works with ggplot. We can easily compare the simulated data sets with the original data by putting them in one plot. For the true data set we set the colour to red. 
 ````{R, plottingsurvival,message= F}
 
 NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
@@ -422,19 +422,19 @@ fitCensor$outcomesModel$model$coefficients[4,1] <- -0.75
 fitCensor$outcomesModel$model$coefficients[4,2] 
 
 numbertosimulate  <- 2000
-newOut1 <- simulateSurvivaltimesWithCensoringCovariate(fitCensor,
+newOut1 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(fitCensor,
                                                        plpData,
                                                        TrainingSet$Train$labels,
                                                        populationSettings,
                                                        numbertosimulate,
                                                        8003 )
-newOut2 <- simulateSurvivaltimesWithCensoringCovariate(fitCensor,
+newOut2 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(fitCensor,
                                                        plpData,
                                                        TrainingSet$Train$labels,
                                                        populationSettings,
                                                        numbertosimulate,
                                                        9003 )
-newOut3 <- simulateSurvivaltimesWithCensoringCovariate(fitCensor,
+newOut3 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(fitCensor,
                                                        plpData,
                                                        TrainingSet$Train$labels,
                                                        populationSettings,
@@ -442,9 +442,9 @@ newOut3 <- simulateSurvivaltimesWithCensoringCovariate(fitCensor,
                                                        8507001 )
 
 ggplot2::ggplot()+
-  KaplanMeierPlot( newOut1, colour = 'red')+
-  KaplanMeierPlot( newOut2, colour = 'orange')+
-  KaplanMeierPlot( newOut3, colour = 'yellow')+
+  PlasmodeSim::KaplanMeierPlot( newOut1, colour = 'red')+
+  PlasmodeSim::KaplanMeierPlot( newOut2, colour = 'orange')+
+  PlasmodeSim::KaplanMeierPlot( newOut3, colour = 'yellow')+
   ggplot2::xlim( c(0,100))
 
 ````
