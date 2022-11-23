@@ -409,10 +409,49 @@ ggplot2::ggplot()+
   ggplot2::xlim(c(0,120))
 
 ````
+We see that the newly generated data follows the original distribution. However it seems that the outcomes are more frequent in the original dataset. 
+
+````{R,plotingcovariateskaplan ,message =F}
+fitCensor$outcomesModel$model$coefficients[2,1] <- 0.5 
+fitCensor$outcomesModel$model$coefficients[2,2]
+
+fitCensor$outcomesModel$model$coefficients[3,1] <- 0
+fitCensor$outcomesModel$model$coefficients[3,2] 
+
+fitCensor$outcomesModel$model$coefficients[4,1] <- -0.75
+fitCensor$outcomesModel$model$coefficients[4,2] 
+
+numbertosimulate  <- 2000
+newOut1 <- simulateSurvivaltimesWithCensoringCovariate(fitCensor,
+                                                       plpData,
+                                                       TrainingSet$Train$labels,
+                                                       populationSettings,
+                                                       numbertosimulate,
+                                                       8003 )
+newOut2 <- simulateSurvivaltimesWithCensoringCovariate(fitCensor,
+                                                       plpData,
+                                                       TrainingSet$Train$labels,
+                                                       populationSettings,
+                                                       numbertosimulate,
+                                                       9003 )
+newOut3 <- simulateSurvivaltimesWithCensoringCovariate(fitCensor,
+                                                       plpData,
+                                                       TrainingSet$Train$labels,
+                                                       populationSettings,
+                                                       numbertosimulate,
+                                                       8507001 )
+
+ggplot2::ggplot()+
+  KaplanMeierPlot( newOut1, colour = 'red')+
+  KaplanMeierPlot( newOut2, colour = 'orange')+
+  KaplanMeierPlot( newOut3, colour = 'yellow')+
+  ggplot2::xlim( c(0,100))
+
+````
 
 ## runPlasmode
 
-the function runPlasmode returns some new simulated survivaltimes, from a model it fits. 
+The function runPlasmode returns some new simulated survivaltimes, from a model it fits. 
 
 ````{R,runplas, message =F}
 runPlas <- PlasmodeSim::runPlasmode(
@@ -435,7 +474,7 @@ runPlas
 Here is a list of future extensions to make the package more useful:
 
 * The runPlasmode should have a working analysisId, analysisName and logsettings, like runPlp has. 
-* one could extend the fitmodel by adding an option for a Differen models for the censoring. 
+* one could extend the fitmodel by adding an option for a Different models for the censoring. 
 * Take a look at the feature ingeneering in the `definecoxmodel` function.
 * Add more functions that define unfitted models.  
 * Make it faster by filtering the population on the row ids drawn, before making their outcomes. 

@@ -3,6 +3,7 @@
 #' @param Data dataframe
 #' @param colour something that ggplot accepts as a colour.
 #'
+#'
 #' @return returns KaplanMeier plot works with ggplot
 #'
 #' @export
@@ -28,7 +29,6 @@ KaplanMeierPlot <- function(Data, colour = 'grey'){#lets add an option to plot t
       kaplanmeier <- append(kaplanmeier, dplyr::last(kaplanmeier)* newInEstimator ) #shouldint it be only the last instead of prod
 
    }
-
   toPlot <- data.frame(times= times, kaplanmeier = kaplanmeier)
   #return(toPlot)
   #ggplot2::ggplot(toPlot, ggplot2::aes(x=times, y=kaplanmeier)) +
