@@ -4,12 +4,19 @@
 \alias{KaplanMeierPlotFilterCovariate}
 \title{predict censoring times}
 \usage{
-KaplanMeierPlotFilterCovariate(Data, covariateToStudy, colour = "grey")
+KaplanMeierPlotFilterCovariate(
+  Data,
+  covariateToStudy,
+  plpData,
+  colour = "grey"
+)
 }
 \arguments{
 \item{Data}{dataframe}
 
 \item{covariateToStudy}{a covaraite id}
+
+\item{plpData}{the covariate Data}
 
 \item{colour}{something that ggplot accepts as a colour.}
 }
