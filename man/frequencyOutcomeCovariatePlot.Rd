@@ -6,8 +6,8 @@
 \usage{
 frequencyOutcomeCovariatePlot(
   tempdata,
-  noPatientsInSym,
   noSyms,
+  noPatientsInSym,
   covariateToStudy,
   plpData,
   noplot,

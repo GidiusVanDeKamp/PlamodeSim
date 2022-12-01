@@ -8,6 +8,7 @@ frequencyOutcomePlot(
   tempdata,
   noSyms,
   noPatientsInSym,
+  plpData,
   noplot,
   colour = "grey"
 )
