@@ -27,7 +27,7 @@ runPlasmode <- function(plpData,
                         executeSettings,
                         numberToSimulate){
 
-  TrainingSet <- PlasmodeSim::MakeTraingSet(
+  TrainingSet <- PlasmodeSim::makeTrainingSet(
     plpData = plpData,
     executeSettings = executeSettings,
     populationSettings = populationSettings,

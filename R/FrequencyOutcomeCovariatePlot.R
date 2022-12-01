@@ -24,7 +24,7 @@ frequencyOutcomeCovariatePlot <- function( tempdata,noSyms,noPatientsInSym, cova
       dplyr::mutate(hasCov = 1*(rowId %in% rowIdsWithCov),
                     hasCovAndOutcome =  hasCov*outcomeCount)
 
-    noCovariateOutcome <-  plpData$outcomes %>% filter(rowId %in% rowIdsWithCov) %>% count()
+    noCovariateOutcome <-  plpData$outcomes %>% dplyr::filter(rowId %in% rowIdsWithCov) %>% dplyr::count()
     greendot <- as.numeric(noCovariateOutcome)/length(rowIdsWithCov)
 
     #force some random order

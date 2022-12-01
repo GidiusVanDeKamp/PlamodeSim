@@ -12,7 +12,7 @@
 #' @return returns prepares the data calls splitdata ect
 #' @export
 #'
-MakeTraingSet <- function(plpData,
+makeTrainingSet <- function(plpData,
                           executeSettings,
                           populationSettings,
                           splitSettings,
