@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @importFrom rlang .data
-frequencyOutcomeCovariatePlot <- function( tempdata,noPatientsInSym,noSyms, covariateToStudy, plpData,noplot, colour = 'grey'){
+frequencyOutcomeCovariatePlot <- function( tempdata,noSyms,noPatientsInSym, covariateToStudy, plpData,noplot, colour = 'grey'){
 # function(censorModel, plpData, population, populationSettings, noSyms, noPatientsInSym, noplot, colour = 'grey'){
 
 
@@ -19,9 +19,13 @@ frequencyOutcomeCovariatePlot <- function( tempdata,noPatientsInSym,noSyms, cova
                          dplyr::select(rowId)%>%
                          dplyr::pull() )
 
+
     tempdata <- tempdata %>%
       dplyr::mutate(hasCov = 1*(rowId %in% rowIdsWithCov),
                     hasCovAndOutcome =  hasCov*outcomeCount)
+
+    noCovariateOutcome <-  plpData$outcomes %>% filter(rowId %in% rowIdsWithCov) %>% count()
+    greendot <- as.numeric(noCovariateOutcome)/length(rowIdsWithCov)
 
     #force some random order
     randomIndex<- sample(nrow(tempdata))
@@ -37,10 +41,13 @@ frequencyOutcomeCovariatePlot <- function( tempdata,noPatientsInSym,noSyms, cova
     toPlot <- data.frame(frequencies=frequencies,position= rep(noplot,noSyms )  )
   #return(toPlot)
 
-    return( ggplot2::geom_boxplot(
-      data = toPlot,
-      mapping = ggplot2::aes( y=frequencies, x= position),
-      colour = colour
+    return(list(
+      ggplot2::geom_boxplot(data = toPlot,
+                            mapping = ggplot2::aes( y=frequencies, x= position),
+                            colour = colour),
+      ggplot2::geom_point( mapping = ggplot2::aes(position, frequency),
+                           data= data.frame(frequency = greendot, position = noplot),
+                           colour =  'green')
     ))
-  }
+}
 

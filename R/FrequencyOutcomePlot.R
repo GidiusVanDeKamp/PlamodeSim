@@ -8,8 +8,9 @@
 #' @export
 #'
 #' @importFrom rlang .data
-frequencyOutcomePlot <- function(tempdata, noSyms, noPatientsInSym, noplot, colour = 'grey'){
+frequencyOutcomePlot <- function(tempdata, noSyms, noPatientsInSym, plpData, noplot, colour = 'grey'){
 
+  greendot <- nrow(plpData$outcomes)/ nrow(plpData$cohorts)
   frequencies <- c()
 
   # force some random order
@@ -21,9 +22,12 @@ frequencyOutcomePlot <- function(tempdata, noSyms, noPatientsInSym, noplot, colo
   }
   toPlot <- data.frame(frequencies=frequencies,position= rep(noplot,noSyms )  )
 
-  return( ggplot2::geom_boxplot(
-    data = toPlot,
-    mapping = ggplot2::aes( y=frequencies, x= position),
-    colour = colour
+  return( list(
+    ggplot2::geom_boxplot(data = toPlot,
+                          mapping = ggplot2::aes(y= frequencies, x= position),
+                          colour = colour),
+    ggplot2::geom_point( mapping = ggplot2::aes(position, frequency),
+                         data= data.frame(frequency = greendot, position = noplot),
+                         colour =  'green')
   ))
 }

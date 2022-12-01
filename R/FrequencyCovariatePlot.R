@@ -19,6 +19,8 @@ frequencyCovariatePlot <- function(tempdata,
                        dplyr::select(rowId)%>%
                        dplyr::pull() )
 
+  greendot <- length(rowIdsWithCov)/ nrow(plpData$cohorts)
+
   tempdata <- tempdata %>%
     dplyr::mutate(hasCovariate = 1 *(rowId %in% rowIdsWithCov))
 
@@ -34,9 +36,12 @@ frequencyCovariatePlot <- function(tempdata,
   toPlot <- data.frame(frequencies=frequencies,position= rep(noplot,noSyms )  )
 
   #return(toPlot)
-  return( ggplot2::geom_boxplot(
-    data = toPlot,
-    mapping = ggplot2::aes( y=frequencies, x= position),
-    colour = colour
+  return(list(
+    ggplot2::geom_boxplot( data = toPlot,
+                           mapping = ggplot2::aes( y=frequencies, x= position),
+                           colour = colour ),
+    ggplot2::geom_point( mapping = ggplot2::aes(position, frequency),
+                         data= data.frame(frequency = greendot, position = noplot),
+                         colour =  'green')
   ))
 }
