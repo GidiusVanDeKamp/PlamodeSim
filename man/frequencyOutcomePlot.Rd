@@ -5,18 +5,26 @@
 \title{box plot of frequency in the outcomes}
 \usage{
 frequencyOutcomePlot(
-  tempdata,
+  OutcomeData,
   noSyms,
   noPatientsInSym,
   plpData,
-  noplot,
+  placeInPlot,
   colour = "grey"
 )
 }
 \arguments{
-\item{colour}{something that ggplot accepts as a colour.}
+\item{OutcomeData}{the data you want visualised.}
 
-\item{Data}{dataframe}
+\item{noSyms}{number of frequencies to be calculated}
+
+\item{noPatientsInSym}{number of patients to calculate the frequency with.}
+
+\item{plpData}{plpData used for finding the green dots}
+
+\item{placeInPlot}{the place in the plot you want this part to be}
+
+\item{colour}{something that ggplot accepts as a colour.}
 }
 \value{
 returns a boxplot of the frequencies of of outcome for the whole dataset.

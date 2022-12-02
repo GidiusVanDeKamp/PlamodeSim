@@ -5,23 +5,27 @@
 \title{box plot of frequency in a covariate the outcomes}
 \usage{
 frequencyOutcomeCovariatePlot(
-  tempdata,
+  OutcomeData,
   noSyms,
   noPatientsInSym,
   covariateToStudy,
   plpData,
-  noplot,
+  placeInPlot,
   colour = "grey"
 )
 }
 \arguments{
-\item{covariateToStudy}{a covaraite id}
+\item{OutcomeData}{the data you want visualised.}
 
-\item{plpData}{the covariate Data}
+\item{noSyms}{number of frequencies to be calculated}
 
-\item{colour}{something that ggplot accepts as a colour.}
+\item{noPatientsInSym}{number of patients to calculate the frequency with.}
 
-\item{Data}{dataframe}
+\item{covariateToStudy}{a covariate id}
+
+\item{plpData}{plpData used for finding the green dots}
+
+\item{placeInPlot}{the place in the plot you want this part t}
 }
 \value{
 returns a boxplot of the frequencie of outcome when a specific covariates is present.

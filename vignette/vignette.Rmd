@@ -19,10 +19,13 @@ install.packages("remotes")
 remotes::install_github("GidiusVanDeKamp/PlasmodeSim")
 ```
 \newpage
+# Problem
+This package is designed to simulated datasets. So that one could test different statistical methods on these data. Beside simulating these new datasets, we implemented some ways to visualise the data.
 
-#  Binary outcomes/ Logistic Regression 
-We start by simulating simple binary variables. In this vignette we use a logisitic regression as model, but one could also pick other models that can be implemented as a `plpModel`. 
-
+We want to obtain a data set that follows a certain model, so that one can test different models on this data set. We have an outcome $Y$ and some data $X_1, X_2, \cdots , X_n$ for each patient. We want to generate new $Y$ while leaving the $X$'s as they are. This way we keep some characteristics of the data set, but we do have a true model. What makes it an good set to test a statistical method.  
+In the first part of this vignette we show how to generate data in the case that $Y$ is binary.
+We will show how to generate $Y$'s that follow a logistic model. So we have 
+$$ P(Y= 1| X_1\cdots, X_n)= \frac{1}{1+ \exp(-(\beta_0+\beta_1 X_1+ \beta_2 X_2 \cdots \beta_3 X_3))}$$, for some $\beta$'s we specify. However the ways of generating new data that follow a different model is also possible, if it is implemented in the plpPredict. So the plpData stores the information about each patient $Y, X_1, \cdots, X_n$, and the plpModel describes the chance of an outcome from the data from a patient. 
 ## Setting up
 To start we need a plpModel and plpData. For information how to obtain these, one can look at; https://ohdsi.github.io/PatientLevelPrediction/articles/BuildingPredictiveModels.html. 
 In this documents we load them from a saved file:
@@ -41,9 +44,10 @@ plpData<- PatientLevelPrediction::loadPlpData(
   "~/R/internshipErasmusMC/simulate-new-patients-outcomes/plp_demolog/Data" )
 ````
 
+
 ## Simulate from a plpModel
 
-In this example we obtain new outcomes following a fitted logistic model. We start from a plpModel, then run predictPlp. At last we generate new outcomes with the function `newOutcomes` that uses the plpPrediction.
+In this example we obtain new outcomes following a fitted logistic model. We start from a plpModel, then run predictPlp. after that we generate new outcomes with the function `newOutcomes` that uses the plpPrediction.
 ````{r, ex1, message=F}
 plpModelLog <- plpResultLogistic$model
 
@@ -54,16 +58,18 @@ plpPrediction <- PatientLevelPrediction::predictPlp(
 )
 
 ```` 
+
 When running the function predictPlp it returns some information. 
 
 ````{r}
-newOut <- PlasmodeSim::newOutcomes(
-  noPersons = 200,
+newOutcomesFittedModel <- PlasmodeSim::newOutcomes(
+  noPersons = 2000,
   props = plpPrediction
 )
-head(newOut)
+head(newOutcomesFittedModel)
 
 ````
+
 The column called 'rowId' in the output of `newOutcomes` contains the rowId's of patients that are drawn randomly with the same probability. The patients could be drawn multiple times. If a rowId happens to be in the output twice, it can have different outcomes, but follows the same probability distribution. The function `newOutcomes` needs a data set that contains the columns 'rowId' and 'value'. The column called 'value' contains the probability of seeing an outcome.
 
 ## Simulation from an unfitted model
@@ -86,74 +92,47 @@ newprobs <- PatientLevelPrediction::predictPlp(
   plpData = plpData,
   population = plpData$cohorts
 )
-newOut <- PlasmodeSim::newOutcomes(
+newOutcomesUnfitted <- PlasmodeSim::newOutcomes(
   noPersons = 2000,
   props = newprobs
 )
-head(newOut)
+head(newOutcomesUnfitted)
 
 ````
 
 ## Visual simulations
 
-The function `visualOutcome` simulates new data and then plots the frequency of the outcome.
-Right now the function `visualOutcome` only works for a logistic model. The green line in the plot is the average outcome in the original data set. 
+As mentioned before it is important to test on data that is similar to the data that a model will be used for (or trained on). That is why we want to see if the properties from the original set are also present in the test set. We will do this with plots. 
+
+We can use the functions `frequencyOutcomePlot` and `frequencyCovariatePlot` to plot the frequencies in the new data sets. These functions works together ggplot. We have generated 2000 points. The function calculates multiple frequencies by chopping the data in smaller sets. It also shows the frequency of the outcomes in the plpData with a green dot.
+
+So in the plot below we see on the the outcome frequency of the original dataset with a greendot. On the left we see the frequencies of the data set generated with the fitted model. There are 10 frequencies calculated with groups of 200 patients. On the right we see the same but for the generated data set that comes from an unfitted model. This function makes a random division to calculate the groups. So one might want to use `set.seed()`. We see that for the fitted model the outcome frequency is similar to the original data set.
+ 
 ````{r, visual, message= F, out.width = "60%"}
-PlasmodeSim::visualOutcome(
+ggplot2::ggplot()+
+PlasmodeSim::frequencyOutcomePlot(
+  OutcomeData = newOutcomesFittedModel,
+  noSyms = 10,
+  noPatientsInSym = 200,
   plpData = plpData,
-  noSimulations = 50, 
-  noPersons = 400,
-  parameters = Parameters
-)
-PlasmodeSim::visualOutcome(
-  plpData = plpData,
-  noSimulations = 50,
-  noPersons = 400,
-  parameters = UnfittedParameters
-)
-````
-
-Above we see plotted the frequency of the outcome for a simulated data set with 200 people 50 times. We can see that the outcome count for the fitted parameters is similar to the outcome count in the original dataset. When changing the parameters the outcome count changes accordingly. 
-
-## Visual of a specific covariate
-Say we are interested in the outcomes of a group with a specific covariate. To visualize this, we choose the third covariate from the model. 
-
-````{r, visual2, message= F, out.width = "60%"}
-
-covariateIdToStudy<- plpResultLogistic$covariateSummary$covariateId[4]
-UnfittedParameters[4,]
-
-PlasmodeSim::visualOutcomeCovariateId(
-  plpData=plpData, 
-  studyCovariateId= covariateIdToStudy, 
-  noSimulations = 20,
-  noPersons = 200, 
-  parameters= UnfittedParameters
-)
-PlasmodeSim::visualOutcomeCovariateId2(
-  plpData=plpData,
-  restrictToCovariateId= covariateIdToStudy,
-  noSimulations = 20,
-  noPersons= 200,
-  parameters= UnfittedParameters 
-)
-PlasmodeSim::visualOutcomeCovariateId2(
-  plpData=plpData,
-  restrictToCovariateId= covariateIdToStudy,
-  noSimulations = 20,
-  noPersons= 200,
-  parameters= Parameters 
-)
+  placeInPlot = 1)+
+PlasmodeSim::frequencyOutcomePlot(newOutcomesUnfitted, 10, 200, plpData, 2)
 
 ````
+We are also interested in seeing the frequencies of a specific covariate in the new data set. We do this with the function `frequencyCovariatePlot`. This function works quite similar, it also chops up the data set. Again we have frequency of the original data set present as a green dot. 
 
-As one can see above `visualOutcomeCovariateId` and `visualOutcomeCovariateId2` are very similiar. They both calculate and plot the frequency for a group with a specific covariate present. The small difference is that `visualOutcomeCovariateId` filters a newly simulated dataset set to only keep the patients where the covariate is present, where as `visualOutcomeCovariateId2` only simulates new outcomes for patients that have the covariate present. 
-We see they are almost identical, only `visualOutcomeCovariateId2` is spread out less because the groups for calculating the frequency with are larger. 
-Again we see that when picking the fitted parameters, the outcome count for patients with a specific covariate, is similar to the original data set.
+````{R, freq covariate, message = F, out.width = "60%" }
+ggplot2::ggplot()+
+PlasmodeSim::frequencyCovariatePlot(newOutcomesFittedModel, 10, 200, 6003, plpData, 1)+ 
+PlasmodeSim::frequencyCovariatePlot(newOutcomesFittedModel, 10, 200, 8003, plpData, 2)
+
+````
 
 # Survival times/ Cox model
-In this part we will show how to simulate new survival times. 
-For simulating new censored survival times, we need more than one probability, so we make use of the baseline hazard, stored in the a plpModel.
+In this part we will show how to simulate new survival times. So now the outcome will not be binary. The outcomes are some positive number, for when the outcome happens. The data can also be right censored. We will show how to generate uncensored and censored data set. 
+
+For simulating new censored survival times, we need more than one probability, we need a survival function ($S(t)$). In this vignette we will show how to simulate from an Cox model. The Cox model assumes that the baseline hazard chages when an covariate is present. The base line hazard is the survival function ($S_0(t)$) when all the covariates are equal to zero. To be more presize for any patient the survival function is given by: 
+$$S(t)=S_0(t)^{\exp(\beta_1 X_1+ \cdots+ \beta_n X_n)} $$.
 
 ## Loading the plpData
 The first step is to load the data where we will simulate new outcomes for. Here we use the package Eunomia for accessing some data set.
@@ -284,30 +263,32 @@ fitCensor <- PlasmodeSim::fitModelWithCensoring(
 
 ## Generating new outcome times 
 
-Now that we have our model with the censoring specified, we can simulate new outcomes. We call the function `simulateSurvivaltimesWithCensoring`. It uses the populationSettings for finding the last time that can be included in the outcome times. 
+Now that we have our model with the censoring specified, we can simulate new outcomes. We call the function `simulateSurvivaltimesWithCensoring`. It uses the populationSettings for finding the last time that can be included in the outcome times. The function draws an outcome time and a censoring time and returns the minimum of these as the new value.
+
+
 ````{R, create newout ,message= F}
 
-NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+NewOutcomesFittedCensorModel <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = fitCensor,
   plpData = plpData,
   population = TrainingSet$Train$labels,
   populationSettings = populationSettings,
-  numberToSimulate = 10
+  numberToSimulate = 2000
 )
-head(NewOutcomes)
+head(NewOutcomesFittedCensorModel)
 ````
 
 Since the censoring model stores two models as a list, one can easily generate uncensored outcomes. This can be done by using the function `simulateSurvivaltimes`. One could also use this function for generating censoring times.  
 
 ````{R,message =F}
-newdata <- PlasmodeSim::simulateSurvivaltimes(
+NewUnfilteredSurvivaltimes <- PlasmodeSim::simulateSurvivaltimes(
   plpModel = fitCensor$outcomesModel,
   plpData = plpData,
-  numberToSimulate = 10,
+  numberToSimulate = 2000,
   population = TrainingSet$Train$labels,
   populationSettings = populationSettings
 )
-head(newdata)
+head(NewUnfilteredSurvivaltimes)
 ````
 
 ## Defining an unfitted model without censoring
@@ -327,15 +308,15 @@ unfittedmodel <- PlasmodeSim::defineCoxModel(
   featureEngineering = NULL #  = NULL is the standard setting. 
 )
 
-newdata <- PlasmodeSim::simulateSurvivaltimes(
+NewOutcomesUnfittedModel <- PlasmodeSim::simulateSurvivaltimes(
   plpModel = unfittedmodel,
   plpData = plpData,
-  numberToSimulate = 10,
+  numberToSimulate = 2000,
   population = TrainingSet$Train$labels,
   populationSettings = populationSettings
 )
 
-head(newdata)
+head(NewOutcomesUnfittedModel)
 ````
 
 ## Defining an unfitted model with censoring 
@@ -346,15 +327,15 @@ There is no function to define an unfitted model with censoring. However, this c
 unfittedcensor<- list(censorModel = unfittedmodel,
                       outcomesModel = fitCensor$outcomesModel) 
 
-NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+NewOutcomesUnfittedCensorModel <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = unfittedcensor,
   plpData = plpData,
   population =  TrainingSet$Train$labels,
   populationSettings = populationSettings,
-  numberToSimulate = 200
+  numberToSimulate = 2000
 )
 
-head(NewOutcomes)
+head(NewOutcomesUnfittedCensorModel)
 ````
 
 ## Adjusting the BaselineSurvival 
@@ -377,83 +358,58 @@ NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   plpData = plpData,
   population =  TrainingSet$Train$labels,
   populationSettings = populationSettings,
-  numberToSimulate = 200
+  numberToSimulate = 2000
 )
 head(NewOutcomes)
 
 
 ````
 ## Plotting Kaplan Meier estimates
-The function `kaplanMeierPlot` visualizes the Kaplan Meier estimate of a given data set. It works with ggplot. We can easily compare the simulated data sets with the original data by putting them in one plot. For the true data set we set the colour to red. 
-````{R, plottingsurvival,message= F}
+Again we are interested in if the features of the original data set are also in the simulated dataset. 
+We first look at the frequency of the covariates in the simulated data. 
+````{R, surv covfreq plot}
+ggplot2::ggplot()+
+PlasmodeSim::frequencyCovariatePlot(NewOutcomesFittedCensorModel, 10, 200, 6003, plpData, 1)+ 
+PlasmodeSim::frequencyCovariatePlot(NewOutcomesFittedCensorModel, 10, 200, 8003, plpData, 2)
 
-NewOutcomes <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
+````
+However for the outcome we are also interested in the time of the outcome. That is why we do not use a boxplot but a Kaplan Meier plot. This type of plot plots the Kaplan Meier estimator that is given by:
+$$ \hat{S}(t) = \prod _{i:t_i\leq t} \Big(  1-\frac{d_i}{n_i} \Big).$$
+Where we have that $d_i$ is the number of outcomes that happend at time $t_i$ and $n_i$ is the number of individuals known to have survived or not yet have been censored upto time $t_i$. It is an estimator for the survival function. 
+
+The function `kaplanMeierPlot` visualizes the Kaplan Meier estimate of a given data set. It also works with ggplot. We can easily compare the simulated data sets with the original data by putting them in one plot. For the true data set we set the colour to red.  
+
+````{R, kaplan}
+
+toPlotFittedCensorModel <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
   censorModel = fitCensor,
   plpData = plpData,
   population = TrainingSet$Train$labels,
   populationSettings = populationSettings,
-  numberToSimulate = 1974
+  numberToSimulate = 4000
 )
 
-NewOutcomes2 <- PlasmodeSim::simulateSurvivaltimesWithCensoring(
-  censorModel = fitCensor,
-  plpData = plpData,
-  population = TrainingSet$Train$labels,
-  populationSettings = populationSettings,
-  numberToSimulate = 1974
-)
+FittedCensorModel1 <- toPlotFittedCensorModel[1:2000,]
+FittedCensorModel2 <- toPlotFittedCensorModel[-(1:2000),]
+FittedCensorModel3 <- NewOutcomesFittedCensorModel
 
 ggplot2::ggplot()+
-  PlasmodeSim::KaplanMeierPlot( NewOutcomes )+
-  PlasmodeSim::KaplanMeierPlot( NewOutcomes2 )+
   PlasmodeSim::KaplanMeierPlot( TrainingSet$Train$labels, colour = 'red' )+
+  PlasmodeSim::KaplanMeierPlot( FittedCensorModel1 )+
+  PlasmodeSim::KaplanMeierPlot( FittedCensorModel2 )+
+  PlasmodeSim::KaplanMeierPlot( FittedCensorModel3 )+
   ggplot2::xlim(c(0,120))
-
 ````
 Above we see that the newly generated data follows the original distribution. However, it seems that the outcomes are more frequent in the original dataset. We can also generate datasets where all the patients have one specific covariate present. We do this with the function `simulateSurvivaltimesWithCensoringCovariate`. This function works in a similar way as `simulateSurvivaltimesWithCensoring` but filters the population to make sure the covariate specified is present.
 
-````{R,plotingcovariateskaplan ,message =F}
-fitCensor$outcomesModel$model$coefficients[2,1] <- 0.5 
-fitCensor$outcomesModel$model$coefficients[2,2] # red
-
-fitCensor$outcomesModel$model$coefficients[3,1] <- 0 
-fitCensor$outcomesModel$model$coefficients[3,2] # orange 
-
-fitCensor$outcomesModel$model$coefficients[4,1] <- -0.75 
-fitCensor$outcomesModel$model$coefficients[4,2] # yellow
-
-numberToSimulate  <- 2000
-newOut1 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(
-  censorModel = fitCensor,
-  plpData = plpData,
-  population = TrainingSet$Train$labels,
-  populationSettings = populationSettings,
-  numberToSimulate = numberToSimulate,
-  covariateToStudy = 8003 
-)
-newOut2 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(
-  censorModel = fitCensor,
-  plpData= plpData,
-  population=  TrainingSet$Train$labels,
-  populationSettings=populationSettings,
-  numberToSimulate=numberToSimulate,
-  covariateToStudy = 9003 
-)
-newOut3 <- PlasmodeSim::simulateSurvivaltimesWithCensoringCovariate(
-  censorModel = fitCensor,
-  plpData= plpData,
-  population=TrainingSet$Train$labels,
-  populationSettings=populationSettings,
-  numberToSimulate=numberToSimulate,
-  covariateToStudy = 8507001 
-)
-
+We are also interested in the influence of a covariate on the survival times. Now we will make the same plots but where the data is filtered such that one specified covariate is present. 
+````{R, kaplanfilter}
 ggplot2::ggplot()+
-  PlasmodeSim::KaplanMeierPlot( newOut1, colour = 'red')+
-  PlasmodeSim::KaplanMeierPlot( newOut2, colour = 'orange')+
-  PlasmodeSim::KaplanMeierPlot( newOut3, colour = 'yellow')+
-  ggplot2::xlim( c(0,100))
-
+  PlasmodeSim::KaplanMeierPlotFilterCovariate( TrainingSet$Train$labels,6003, plpData, colour = 'red' )+
+  PlasmodeSim::KaplanMeierPlotFilterCovariate( FittedCensorModel1, 6003, plpData )+
+  PlasmodeSim::KaplanMeierPlotFilterCovariate( FittedCensorModel2, 6003, plpData )+
+  PlasmodeSim::KaplanMeierPlotFilterCovariate( FittedCensorModel3, 6003, plpData )+
+  ggplot2::xlim(c(0,120))
 ````
 
 ## runPlasmode
