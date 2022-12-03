@@ -26,6 +26,8 @@ frequencyCovariatePlot(
 \item{plpData}{plpData used for finding the green dots}
 
 \item{placeInPlot}{the place in the plot you want this part t}
+
+\item{colour}{something that ggplot accepts as a colour.}
 }
 \value{
 returns a boxplot of the frequencies of the covariates in the dataset.

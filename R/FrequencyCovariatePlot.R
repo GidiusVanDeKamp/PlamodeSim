@@ -6,6 +6,7 @@
 #' @param covariateToStudy a covariate id
 #' @param plpData plpData used for finding the green dots
 #' @param placeInPlot the place in the plot you want this part t
+#' @param colour something that ggplot accepts as a colour.
 #'
 #'
 #' @return returns a boxplot of the frequencies of the covariates in the dataset.
